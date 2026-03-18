@@ -12,39 +12,73 @@ const FEEDS = [
   { url: 'https://monochrome-watches.com/feed/', source: 'Monochrome' },
   { url: 'https://wornandwound.com/feed/', source: 'Worn & Wound' },
   { url: 'https://www.watchtime.com/feed/', source: 'WatchTime' },
-  { url: 'https://www.timepiecesandmore.com/feed/', source: 'Time+Tide' },
   { url: 'https://sjxwatch.com/feed/', source: 'SJX' },
 ]
 
+function extractTag(xml: string, tag: string): string {
+  const patterns = [
+    new RegExp(`<${tag}[^>]*><!\\[CDATA\\[([\\s\\S]*?)\\]\\]><\\/${tag}>`, 'i'),
+    new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, 'i'),
+  ]
+  for (const pattern of patterns) {
+    const match = xml.match(pattern)
+    if (match?.[1]) return match[1].trim()
+  }
+  return ''
+}
+
+function extractImage(xml: string): string {
+  const patterns = [
+    /<media:content[^>]*url="([^"]*)"[^>]*>/i,
+    /<media:thumbnail[^>]*url="([^"]*)"[^>]*>/i,
+    /<enclosure[^>]*url="([^"]*)"[^>]*type="image[^>]*>/i,
+    /<img[^>]*src="([^"]*)"[^>]*>/i,
+  ]
+  for (const pattern of patterns) {
+    const match = xml.match(pattern)
+    if (match?.[1]) return match[1].trim()
+  }
+  return ''
+}
+
 async function parseFeed(url: string, source: string) {
   try {
-    const res = await fetch(url, { next: { revalidate: 0 } })
+    const res = await fetch(url, {
+      headers: { 'User-Agent': 'Horveil/1.0 RSS Reader' },
+      next: { revalidate: 0 }
+    })
+    if (!res.ok) {
+      console.error(`${source}: HTTP ${res.status}`)
+      return []
+    }
     const text = await res.text()
 
     const items: any[] = []
-    const itemMatches = text.matchAll(/<item>([\s\S]*?)<\/item>/g)
+    const parts = text.split('<item>')
+    parts.shift()
 
-    for (const match of itemMatches) {
-      const item = match[1]
-      const title = item.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>|<title>(.*?)<\/title>/)?.[1] || ''
-      const link = item.match(/<link>(.*?)<\/link>|<link[^>]*href="(.*?)"/)?.[1] || ''
-      const pubDate = item.match(/<pubDate>(.*?)<\/pubDate>/)?.[1] || ''
-      const description = item.match(/<description><!\[CDATA\[(.*?)\]\]><\/description>|<description>(.*?)<\/description>/)?.[1] || ''
-      const imageUrl = item.match(/<media:content[^>]*url="(.*?)"|<enclosure[^>]*url="(.*?)"/)?.[1] || ''
+    for (const part of parts) {
+      const itemXml = part.split('</item>')[0]
+      const title = extractTag(itemXml, 'title')
+      const link = extractTag(itemXml, 'link') || extractTag(itemXml, 'guid')
+      const pubDate = extractTag(itemXml, 'pubDate')
+      const description = extractTag(itemXml, 'description')
+      const imageUrl = extractImage(itemXml)
 
-      if (title && link) {
+      if (title && link && link.startsWith('http')) {
         items.push({
-          title: title.trim(),
-          url: link.trim(),
+          title: title.replace(/&amp;/g, '&').replace(/&#8211;/g, '–').replace(/&#039;/g, "'"),
+          url: link,
           source,
           published_at: pubDate ? new Date(pubDate).toISOString() : new Date().toISOString(),
-          summary: description.replace(/<[^>]*>/g, '').slice(0, 300).trim(),
+          summary: description.replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').slice(0, 300).trim(),
           image_url: imageUrl || null,
           tag: source,
         })
       }
     }
 
+    console.log(`${source}: found ${items.length} items`)
     return items.slice(0, 5)
   } catch (e) {
     console.error(`Failed to fetch ${source}:`, e)
@@ -58,7 +92,14 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const allArticles = (await Promise.all(FEEDS.map(f => parseFeed(f.url, f.source)))).flat()
+  const results = await Promise.all(FEEDS.map(f => parseFeed(f.url, f.source)))
+  const allArticles = results.flat()
+
+  console.log(`Total articles parsed: ${allArticles.length}`)
+
+  if (allArticles.length === 0) {
+    return NextResponse.json({ success: false, error: 'No articles parsed', count: 0 })
+  }
 
   const { error } = await supabase
     .from('articles')
