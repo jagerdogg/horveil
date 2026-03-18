@@ -1,151 +1,88 @@
+'use client'
+
+import { useState } from 'react'
+
 export default function Hero() {
+  const [email, setEmail] = useState('')
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error' | 'duplicate'>('idle')
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    setStatus('loading')
+
+    const res = await fetch('/api/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    })
+
+    if (res.ok) {
+      setStatus('success')
+      setEmail('')
+    } else if (res.status === 409) {
+      setStatus('duplicate')
+    } else {
+      setStatus('error')
+    }
+  }
+
   return (
-    <div style={{
-      background: '#1a1a18',
-      color: '#fafaf8',
-      padding: '52px 40px 44px',
-      textAlign: 'center',
-      position: 'relative',
-      overflow: 'hidden',
-    }}>
+    <section style={{ background: 'var(--dark)', color: 'white', padding: '80px 24px' }}>
+      <div style={{ maxWidth: '720px', margin: '0 auto', textAlign: 'center' }}>
+        <p style={{ color: 'var(--gold-light)', fontFamily: 'var(--font-display)', fontStyle: 'italic', marginBottom: '16px' }}>
+          The watch world, curated daily
+        </p>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2rem, 5vw, 3.5rem)', fontWeight: 500, lineHeight: 1.15, marginBottom: '24px' }}>
+          Every story worth reading.<br />
+          <em style={{ color: 'var(--gold-light)' }}>One take worth keeping.</em>
+        </h1>
+        <p style={{ color: '#a09d96', fontSize: '1.1rem', marginBottom: '40px', maxWidth: '520px', margin: '0 auto 40px' }}>
+          I built Horveil because watch news was everywhere and insight was nowhere. One email, five stories, one honest take each. Monday to Friday.
+        </p>
 
-      {/* Eyebrow */}
-      <p style={{
-        fontSize: '11px',
-        fontWeight: 500,
-        letterSpacing: '0.14em',
-        textTransform: 'uppercase',
-        color: '#8B6F47',
-        marginBottom: '14px',
-      }}>
-        Horveil Daily Newsletter
-      </p>
+        {status === 'success' ? (
+          <p style={{ color: 'var(--gold-light)', fontFamily: 'var(--font-display)', fontStyle: 'italic', fontSize: '1.2rem' }}>
+            You're in. First issue lands Monday.
+          </p>
+        ) : (
+          <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <input
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              placeholder="your@email.com"
+              required
+              style={{
+                padding: '14px 20px', borderRadius: '100px', border: '1px solid #3a3a38',
+                background: '#2a2a28', color: 'white', fontSize: '1rem', width: '280px', outline: 'none'
+              }}
+            />
+            <button
+              type="submit"
+              disabled={status === 'loading'}
+              style={{
+                padding: '14px 28px', borderRadius: '100px', background: 'var(--gold)',
+                color: 'white', fontWeight: 500, fontSize: '1rem', border: 'none', cursor: 'pointer'
+              }}
+            >
+              {status === 'loading' ? 'Joining...' : 'Get the newsletter'}
+            </button>
+          </form>
+        )}
 
-      {/* Headline */}
-      <h1 style={{
-        fontFamily: 'Playfair Display, serif',
-        fontSize: '42px',
-        fontWeight: 500,
-        lineHeight: 1.15,
-        marginBottom: '12px',
-        letterSpacing: '-0.02em',
-      }}>
-        The watch world,{' '}
-        <em style={{ color: '#c9a96e' }}>filtered for you.</em>
-      </h1>
+        {status === 'duplicate' && (
+          <p style={{ color: 'var(--gold-light)', marginTop: '12px', fontSize: '0.9rem' }}>You're already subscribed!</p>
+        )}
+        {status === 'error' && (
+          <p style={{ color: '#e07070', marginTop: '12px', fontSize: '0.9rem' }}>Something went wrong. Try again.</p>
+        )}
 
-      {/* Subheading */}
-      <p style={{
-        fontSize: '14px',
-        color: '#9e9b94',
-        lineHeight: 1.7,
-        maxWidth: '480px',
-        margin: '0 auto 10px',
-        fontWeight: 300,
-      }}>
-        Every morning, Monday to Friday — the 5 stories worth your attention,
-        each with one honest line of context. No noise, no filler.
-      </p>
-
-      {/* Founder quote */}
-      <p style={{
-        fontSize: '12px',
-        color: '#555',
-        lineHeight: 1.6,
-        maxWidth: '420px',
-        margin: '0 auto 28px',
-        fontStyle: 'italic',
-      }}>
-        "I built Horveil because I was spending an hour a day reading watch sites
-        and still missing what mattered. Now I spend five minutes."{' '}
-        <span style={{ color: '#8B6F47', fontStyle: 'normal', fontWeight: 500 }}>
-          — Stephen, founder
-        </span>
-      </p>
-
-      {/* Email signup form */}
-      <div style={{
-        display: 'flex',
-        gap: '8px',
-        maxWidth: '400px',
-        margin: '0 auto',
-      }}>
-        <input
-          type="email"
-          placeholder="your@email.com"
-          style={{
-            flex: 1,
-            padding: '12px 18px',
-            borderRadius: '100px',
-            border: '1px solid #2e2e2a',
-            background: '#242420',
-            color: '#fafaf8',
-            fontSize: '13px',
-            fontFamily: 'DM Sans, sans-serif',
-            outline: 'none',
-          }}
-        />
-        <button style={{
-          padding: '12px 22px',
-          borderRadius: '100px',
-          background: '#8B6F47',
-          color: '#ffffff',
-          border: 'none',
-          cursor: 'pointer',
-          fontSize: '13px',
-          fontWeight: 500,
-          fontFamily: 'DM Sans, sans-serif',
-          whiteSpace: 'nowrap',
-        }}>
-          Get the daily edition
-        </button>
+        <div style={{ display: 'flex', gap: '40px', justifyContent: 'center', marginTop: '48px', color: '#6b6860' }}>
+          <div><strong style={{ color: 'white', display: 'block', fontSize: '1.4rem' }}>10</strong>stories daily</div>
+          <div><strong style={{ color: 'white', display: 'block', fontSize: '1.4rem' }}>5</strong>in your inbox</div>
+          <div><strong style={{ color: 'white', display: 'block', fontSize: '1.4rem' }}>1</strong>take each</div>
+        </div>
       </div>
-
-      {/* Fine print */}
-      <p style={{
-        fontSize: '11px',
-        color: '#444',
-        marginTop: '10px',
-      }}>
-        Free forever. No spam. Unsubscribe in one click. Join the founding readers.
-      </p>
-
-      {/* Stats row */}
-      <div style={{
-        display: 'flex',
-        gap: '28px',
-        justifyContent: 'center',
-        marginTop: '24px',
-        paddingTop: '22px',
-        borderTop: '1px solid #242420',
-      }}>
-        {[
-          { num: 'Mon–Fri', label: 'Published' },
-          { num: '5', label: 'Stories daily' },
-          { num: '~10', label: 'Sources curated' },
-          { num: 'Free', label: 'Always' },
-        ].map((stat) => (
-          <div key={stat.label} style={{ textAlign: 'center' }}>
-            <div style={{
-              fontFamily: 'Playfair Display, serif',
-              fontSize: '22px',
-              color: '#fafaf8',
-            }}>
-              {stat.num}
-            </div>
-            <div style={{
-              fontSize: '10px',
-              color: '#555',
-              textTransform: 'uppercase',
-              letterSpacing: '0.08em',
-              marginTop: '2px',
-            }}>
-              {stat.label}
-            </div>
-          </div>
-        ))}
-      </div>
-
-    </div>
+    </section>
   )
 }
