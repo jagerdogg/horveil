@@ -7,7 +7,6 @@ const supabase = createClient(
 )
 
 const FEEDS = [
-  { url: 'https://www.hodinkee.com/articles.rss', source: 'Hodinkee' },
   { url: 'https://www.fratellowatches.com/feed/', source: 'Fratello' },
   { url: 'https://www.ablogtowatch.com/feed/', source: 'aBlogtoWatch' },
   { url: 'https://monochrome-watches.com/feed/', source: 'Monochrome' },
