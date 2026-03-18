@@ -1,11 +1,13 @@
 import Navbar from './components/Navbar'
+import Hero from './components/Hero'
+import WWBanner from './components/WWBanner'
 
 export default function Home() {
   return (
     <main>
       <Navbar />
-      <h1>Horveil</h1>
-      <p>Watch culture, deeper.</p>
+      <Hero />
+      <WWBanner />
     </main>
   )
 }
