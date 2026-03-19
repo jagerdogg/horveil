@@ -1,3 +1,4 @@
+export const revalidate = 0
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import WWBanner from './components/WWBanner'
