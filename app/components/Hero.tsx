@@ -29,15 +29,12 @@ export default function Hero() {
   return (
     <section style={{ background: 'var(--dark)', color: 'white', padding: '80px 24px' }}>
       <div style={{ maxWidth: '720px', margin: '0 auto', textAlign: 'center' }}>
-        <p style={{ color: 'var(--gold-light)', fontFamily: 'var(--font-display)', fontStyle: 'italic', marginBottom: '16px' }}>
-          The watch world, curated daily
-        </p>
         <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2rem, 5vw, 3.5rem)', fontWeight: 500, lineHeight: 1.15, marginBottom: '24px' }}>
-          Every story worth reading.<br />
-          <em style={{ color: 'var(--gold-light)' }}>One take worth keeping.</em>
+          Every story worth your time.<br />
+          <em style={{ color: 'var(--gold-light)' }}>One honest take each.</em>
         </h1>
         <p style={{ color: '#a09d96', fontSize: '1.1rem', marginBottom: '40px', maxWidth: '520px', margin: '0 auto 40px' }}>
-          I built Horveil because watch news was everywhere and insight was nowhere. One email, five stories, one honest take each. Monday to Friday.
+          Too many tabs. Not enough signal. Horveil is the fix. One email, five stories, Monday to Friday.
         </p>
 
         {status === 'success' ? (
