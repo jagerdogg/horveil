@@ -31,7 +31,7 @@ export async function POST(request: Request) {
   }
 
   await resend.emails.send({
-    from: 'Horveil <hello@horveil.com>',
+    from: 'Horveil <onboarding@resend.dev>',
     to: email,
     subject: 'Confirm your Horveil subscription',
     html: `
