@@ -21,23 +21,20 @@ export default function AdminPage() {
   const [articles, setArticles] = useState<Article[]>([])
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState<string | null>(null)
+  const [suggesting, setSuggesting] = useState<string | null>(null)
   const [takes, setTakes] = useState<Record<string, string>>({})
   const [newsletter, setNewsletter] = useState<Record<string, boolean>>({})
   const [featured, setFeatured] = useState<Record<string, boolean>>({})
 
   async function login(e: React.FormEvent) {
     e.preventDefault()
-    if (password === process.env.NEXT_PUBLIC_ADMIN_PASSWORD) {
-      setAuthed(true)
-    } else {
-      const res = await fetch('/api/admin/auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
-      })
-      if (res.ok) setAuthed(true)
-      else alert('Wrong password')
-    }
+    const res = await fetch('/api/admin/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password }),
+    })
+    if (res.ok) setAuthed(true)
+    else alert('Wrong password')
   }
 
   async function loadArticles() {
@@ -76,6 +73,20 @@ export default function AdminPage() {
       }),
     })
     setSaving(null)
+  }
+
+  async function suggestTake(article: Article) {
+    setSuggesting(article.id)
+    const res = await fetch('/api/admin/suggest', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: article.title, summary: article.summary, source: article.source }),
+    })
+    const data = await res.json()
+    if (data.take) {
+      setTakes(prev => ({ ...prev, [article.id]: data.take }))
+    }
+    setSuggesting(null)
   }
 
   const newsletterCount = Object.values(newsletter).filter(Boolean).length
@@ -120,7 +131,7 @@ export default function AdminPage() {
           <p style={{ color: '#6b6860', textAlign: 'center', padding: '48px' }}>Loading articles...</p>
         ) : (
           articles.map(article => (
-            <div key={article.id} style={{ background: 'white', borderRadius: '14px', border: '1px solid #ece9e2', padding: '24px', marginBottom: '16px' }}>
+            <div key={article.id} style={{ background: 'white', borderRadius: '14px', border: `1px solid ${newsletter[article.id] ? '#8B6F47' : '#ece9e2'}`, padding: '24px', marginBottom: '16px', transition: 'border-color 0.2s' }}>
               <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
                 {article.image_url && (
                   <img src={article.image_url} alt="" style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px', flexShrink: 0 }} />
@@ -159,6 +170,13 @@ export default function AdminPage() {
                       />
                       Featured
                     </label>
+                    <button
+                      onClick={() => suggestTake(article)}
+                      disabled={suggesting === article.id}
+                      style={{ padding: '8px 16px', borderRadius: '100px', background: '#f5f0e8', color: '#8B6F47', fontWeight: 500, fontSize: '0.85rem', border: '1px solid #e8e0d0', cursor: 'pointer' }}
+                    >
+                      {suggesting === article.id ? 'Thinking...' : '✦ Suggest'}
+                    </button>
                     <button
                       onClick={() => save(article.id)}
                       disabled={saving === article.id}
