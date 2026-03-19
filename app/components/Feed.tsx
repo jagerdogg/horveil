@@ -19,7 +19,7 @@ async function getArticles(): Promise<Article[]> {
     .from('articles')
     .select('*')
     .order('published_at', { ascending: false })
-    .limit(10)
+    .limit(20)
 
   if (error) {
     console.error('Error fetching articles:', error)
@@ -48,7 +48,7 @@ export default async function Feed() {
       <div style={{ display: 'flex', gap: '48px', alignItems: 'flex-start' }}>
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', fontWeight: 500 }}>Today\'s Feed</h2>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', fontWeight: 500 }}>Today's Feed</h2>
             <span style={{ background: 'var(--gold-pale)', color: 'var(--gold)', fontSize: '0.75rem', fontWeight: 500, padding: '4px 10px', borderRadius: '100px' }}>
               {articles.length} stories
             </span>

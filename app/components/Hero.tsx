@@ -78,7 +78,7 @@ export default function Hero() {
         )}
 
         <div style={{ display: 'flex', gap: '40px', justifyContent: 'center', marginTop: '48px', color: '#6b6860' }}>
-          <div><strong style={{ color: 'white', display: 'block', fontSize: '1.4rem' }}>10</strong>stories daily</div>
+          <div><strong style={{ color: 'white', display: 'block', fontSize: '1.4rem' }}>Fresh</strong>every day</div>
           <div><strong style={{ color: 'white', display: 'block', fontSize: '1.4rem' }}>5</strong>in your inbox</div>
           <div><strong style={{ color: 'white', display: 'block', fontSize: '1.4rem' }}>1</strong>take each</div>
         </div>
