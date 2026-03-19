@@ -1,5 +1,6 @@
-export const revalidate = 0import { supabase } from '../../lib/supabase'
+import { supabase } from '../../lib/supabase'
 import ArticleImage from './ArticleImage'
+
 export const revalidate = 0
 
 interface Article {
@@ -108,7 +109,7 @@ export default async function Feed() {
 
           <div style={{ background: 'white', borderRadius: '18px', border: '1px solid var(--border)', padding: '24px' }}>
             <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', fontWeight: 500, marginBottom: '16px' }}>Sources</h3>
-            {['Fratello', 'aBlogtoWatch', 'Monochrome', 'Worn & Wound', 'WatchTime', 'SJX'].map(source => (
+            {['Fratello', 'aBlogtoWatch', 'Monochrome', 'Worn & Wound', 'Revolution'].map(source => (
               <div key={source} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
                 <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--gold)' }} />
                 <span style={{ fontSize: '0.85rem', color: 'var(--muted)' }}>{source}</span>
