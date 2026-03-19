@@ -11,8 +11,7 @@ const FEEDS = [
   { url: 'https://www.ablogtowatch.com/feed/', source: 'aBlogtoWatch' },
   { url: 'https://monochrome-watches.com/feed/', source: 'Monochrome' },
   { url: 'https://wornandwound.com/feed/', source: 'Worn & Wound' },
-  { url: 'https://www.watchtime.com/feed/', source: 'WatchTime' },
-  { url: 'https://sjxwatch.com/feed/', source: 'SJX' },
+  { url: 'https://revolutionwatch.com/feed/', source: 'Revolution' },
 ]
 
 function extractTag(xml: string, tag: string): string {
@@ -52,7 +51,6 @@ async function parseFeed(url: string, source: string) {
       return []
     }
     const text = await res.text()
-
     const items: any[] = []
     const parts = text.split('<item>')
     parts.shift()
@@ -63,7 +61,7 @@ async function parseFeed(url: string, source: string) {
       const link = extractTag(itemXml, 'link') || extractTag(itemXml, 'guid')
       const pubDate = extractTag(itemXml, 'pubDate')
       const description = extractTag(itemXml, 'description')
-      const imageUrl = extractImage(itemXml)
+      const imageUrl = source === 'aBlogtoWatch' ? null : extractImage(itemXml)
 
       if (title && link && link.startsWith('http')) {
         items.push({
@@ -94,8 +92,6 @@ export async function GET(request: Request) {
 
   const results = await Promise.all(FEEDS.map(f => parseFeed(f.url, f.source)))
   const allArticles = results.flat()
-
-  console.log(`Total articles parsed: ${allArticles.length}`)
 
   if (allArticles.length === 0) {
     return NextResponse.json({ success: false, error: 'No articles parsed', count: 0 })
