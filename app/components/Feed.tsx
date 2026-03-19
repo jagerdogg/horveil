@@ -1,5 +1,6 @@
-import { supabase } from '../../lib/supabase'
+export const revalidate = 0import { supabase } from '../../lib/supabase'
 import ArticleImage from './ArticleImage'
+export const revalidate = 0
 
 interface Article {
   id: string
