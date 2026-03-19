@@ -40,7 +40,7 @@ export async function POST(request: Request) {
         <p style="color: #6b6860; font-size: 0.9rem; margin-bottom: 32px;">watch culture, deeper</p>
         <h2 style="font-size: 1.3rem; font-weight: 500; margin-bottom: 16px;">One click to confirm.</h2>
         <p style="color: #6b6860; line-height: 1.7; margin-bottom: 32px;">
-          You're almost in. Click below to confirm your subscription and start receiving the Horveil daily digest — five stories, one honest take each, Monday to Friday.
+          You're almost in. Click below to confirm and join Horveil's founding readers.
         </p>
         <a href="${process.env.NEXT_PUBLIC_SITE_URL}/api/confirm?token=${token}" 
            style="display: inline-block; background: #8B6F47; color: white; padding: 14px 32px; border-radius: 100px; text-decoration: none; font-family: sans-serif; font-weight: 500;">

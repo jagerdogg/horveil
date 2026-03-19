@@ -39,7 +39,7 @@ export default function Hero() {
 
         {status === 'success' ? (
           <p style={{ color: 'var(--gold-light)', fontFamily: 'var(--font-display)', fontStyle: 'italic', fontSize: '1.2rem' }}>
-            You're in. First issue lands Monday.
+            You're in. Welcome to Horveil, you're one of our founding readers.
           </p>
         ) : (
           <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
