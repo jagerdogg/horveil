@@ -8,8 +8,6 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
-const resend = new Resend(process.env.RESEND_API_KEY)
-
 export async function POST(request: Request) {
   const { email } = await request.json()
 
@@ -29,6 +27,8 @@ export async function POST(request: Request) {
     }
     return NextResponse.json({ error: 'Something went wrong' }, { status: 500 })
   }
+
+  const resend = new Resend(process.env.RESEND_API_KEY)
 
   await resend.emails.send({
     from: 'Horveil <onboarding@resend.dev>',
