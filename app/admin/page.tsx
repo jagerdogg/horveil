@@ -158,17 +158,12 @@ export default function AdminPage() {
                       <input
                         type="checkbox"
                         checked={newsletter[article.id] || false}
-                        onChange={e => setNewsletter(prev => ({ ...prev, [article.id]: e.target.checked }))}
+                        onChange={e => {
+                          if (e.target.checked && newsletterCount >= 5) return
+                          setNewsletter(prev => ({ ...prev, [article.id]: e.target.checked }))
+                        }}
                       />
                       Newsletter
-                    </label>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', fontSize: '0.85rem', color: '#6b6860' }}>
-                      <input
-                        type="checkbox"
-                        checked={featured[article.id] || false}
-                        onChange={e => setFeatured(prev => ({ ...prev, [article.id]: e.target.checked }))}
-                      />
-                      Featured
                     </label>
                     <button
                       onClick={() => suggestTake(article)}
