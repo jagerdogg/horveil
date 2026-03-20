@@ -1,3 +1,4 @@
+cat > app/api/fetch-feeds/route.ts << 'EOF'
 import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 
@@ -65,13 +66,15 @@ async function parseFeed(url: string, source: string) {
 
       if (title && link && link.startsWith('http')) {
         items.push({
-          title: title.replace(/&amp;/g, '&').replace(/&#8211;/g, '–').replace(/&#8212;/g, '—').replace(/&#039;/g, "'").replace(/&#8220;/g, '"').replace(/&#8221;/g, '"').replace(/&#8216;/g, "'").replace(/&#8217;/g, "'").replace(/&quot;/g, '"').replace(/&nbsp;/g, ' '),
+          title: title.replace(/&amp;/g, '&').replace(/&#8211;/g, '-').replace(/&#8212;/g, '-').replace(/&#039;/g, "'").replace(/&#8220;/g, '"').replace(/&#8221;/g, '"').replace(/&#8216;/g, "'").replace(/&#8217;/g, "'").replace(/&quot;/g, '"').replace(/&nbsp;/g, ' '),
           url: link,
           source,
           published_at: pubDate ? new Date(pubDate).toISOString() : new Date().toISOString(),
           summary: description.replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').slice(0, 300).trim(),
           image_url: imageUrl || null,
           tag: source,
+          in_newsletter: false,
+          featured: false,
         })
       }
     }
@@ -90,6 +93,12 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
+  // Clear all newsletter flags before fetching fresh articles
+  await supabase
+    .from('articles')
+    .update({ in_newsletter: false, featured: false })
+    .gte('created_at', '2000-01-01')
+
   const results = await Promise.all(FEEDS.map(f => parseFeed(f.url, f.source)))
   const allArticles = results.flat()
 
@@ -107,3 +116,4 @@ export async function GET(request: Request) {
 
   return NextResponse.json({ success: true, count: allArticles.length })
 }
+EOF
