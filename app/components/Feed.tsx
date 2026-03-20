@@ -48,10 +48,13 @@ export default async function Feed() {
 
   return (
     <section style={{ maxWidth: '1100px', margin: '0 auto', padding: '48px 24px' }}>
-      <div style={{ display: 'flex', gap: '48px', alignItems: 'flex-start' }}>
-        <div style={{ flex: 1 }}>
 
-          {/* Newsletter picks */}
+      {/* Mobile: stack, Desktop: side by side */}
+      <div style={{ display: 'flex', gap: '48px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+
+        {/* Main feed */}
+        <div style={{ flex: '1 1 500px', minWidth: 0 }}>
+
           {newsletter.length > 0 && (
             <>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
@@ -87,7 +90,6 @@ export default async function Feed() {
             </>
           )}
 
-          {/* Rest of feed */}
           {rest.length > 0 && (
             <>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: '32px 0 20px' }}>
@@ -105,7 +107,7 @@ export default async function Feed() {
                       alt={article.title}
                       style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '10px', flexShrink: 0 }}
                     />
-                    <div style={{ flex: 1 }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
                         <span style={{ background: 'var(--gold-pale)', color: 'var(--gold)', fontSize: '0.7rem', fontWeight: 500, padding: '3px 8px', borderRadius: '100px' }}>{article.source}</span>
                       </div>
@@ -117,7 +119,6 @@ export default async function Feed() {
             </>
           )}
 
-          {/* No picks yet state */}
           {newsletter.length === 0 && rest.length > 0 && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
               <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', fontWeight: 500 }}>Today's Feed</h2>
@@ -130,7 +131,7 @@ export default async function Feed() {
         </div>
 
         {/* Sidebar */}
-        <div style={{ width: '300px', flexShrink: 0 }}>
+        <div style={{ width: '280px', flexShrink: 0, flex: '0 1 280px' }}>
           <div style={{ background: 'var(--dark)', borderRadius: '18px', padding: '28px', marginBottom: '16px' }}>
             <h3 style={{ fontFamily: 'var(--font-display)', color: 'white', fontSize: '1.1rem', marginBottom: '8px' }}>Get the daily digest</h3>
             <p style={{ color: '#9e9b94', fontSize: '0.85rem', marginBottom: '16px' }}>5 stories, one take each. Monday to Friday.</p>
@@ -147,6 +148,7 @@ export default async function Feed() {
             ))}
           </div>
         </div>
+
       </div>
     </section>
   )
