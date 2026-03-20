@@ -22,9 +22,9 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState<string | null>(null)
   const [suggesting, setSuggesting] = useState<string | null>(null)
+  const [sending, setSending] = useState(false)
   const [takes, setTakes] = useState<Record<string, string>>({})
   const [newsletter, setNewsletter] = useState<Record<string, boolean>>({})
-  const [featured, setFeatured] = useState<Record<string, boolean>>({})
 
   async function login(e: React.FormEvent) {
     e.preventDefault()
@@ -44,15 +44,12 @@ export default function AdminPage() {
     setArticles(data)
     const t: Record<string, string> = {}
     const n: Record<string, boolean> = {}
-    const f: Record<string, boolean> = {}
     data.forEach((a: Article) => {
       t[a.id] = a.horveil_take || ''
       n[a.id] = a.in_newsletter || false
-      f[a.id] = a.featured || false
     })
     setTakes(t)
     setNewsletter(n)
-    setFeatured(f)
     setLoading(false)
   }
 
@@ -69,7 +66,7 @@ export default function AdminPage() {
         id,
         horveil_take: takes[id] || null,
         in_newsletter: newsletter[id] || false,
-        featured: featured[id] || false,
+        featured: newsletter[id] || false,
       }),
     })
     setSaving(null)
@@ -87,6 +84,23 @@ export default function AdminPage() {
       setTakes(prev => ({ ...prev, [article.id]: data.take }))
     }
     setSuggesting(null)
+  }
+
+  async function sendNewsletter() {
+    if (!confirm('Send newsletter to all confirmed subscribers?')) return
+    setSending(true)
+    const res = await fetch('/api/admin/send-newsletter', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password }),
+    })
+    const data = await res.json()
+    if (data.success) {
+      alert(`Sent to ${data.sent} subscriber${data.sent === 1 ? '' : 's'}.`)
+    } else {
+      alert(`Error: ${data.error}`)
+    }
+    setSending(false)
   }
 
   const newsletterCount = Object.values(newsletter).filter(Boolean).length
@@ -122,8 +136,19 @@ export default function AdminPage() {
               {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
             </p>
           </div>
-          <div style={{ background: newsletterCount === 5 ? '#2d5a27' : '#8B6F47', color: 'white', padding: '8px 16px', borderRadius: '100px', fontSize: '0.85rem', fontWeight: 500 }}>
-            {newsletterCount}/5 newsletter
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+            <div style={{ background: newsletterCount === 5 ? '#2d5a27' : '#8B6F47', color: 'white', padding: '8px 16px', borderRadius: '100px', fontSize: '0.85rem', fontWeight: 500 }}>
+              {newsletterCount}/5 newsletter
+            </div>
+            {newsletterCount === 5 && (
+              <button
+                onClick={sendNewsletter}
+                disabled={sending}
+                style={{ padding: '8px 20px', borderRadius: '100px', background: '#2d5a27', color: 'white', fontWeight: 500, fontSize: '0.85rem', border: 'none', cursor: 'pointer' }}
+              >
+                {sending ? 'Sending...' : 'Send newsletter'}
+              </button>
+            )}
           </div>
         </div>
 

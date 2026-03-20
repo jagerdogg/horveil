@@ -7,9 +7,13 @@ const supabase = createClient(
 )
 
 export async function GET() {
+  const since = new Date()
+  since.setHours(since.getHours() - 24)
+
   const { data, error } = await supabase
     .from('articles')
     .select('*')
+    .gte('created_at', since.toISOString())
     .order('published_at', { ascending: false })
     .limit(30)
 
