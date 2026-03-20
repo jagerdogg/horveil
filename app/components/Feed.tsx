@@ -67,13 +67,11 @@ export default async function Feed() {
               {newsletter.map((article, i) => (
                 <a key={article.id} href={article.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
                   <div style={{ background: 'white', borderRadius: '18px', border: '1px solid var(--border)', padding: '28px', marginBottom: '16px' }}>
-                    {i === 0 && (
-                      <ArticleImage
-                        src={article.image_url}
-                        alt={article.title}
-                        style={{ width: '100%', height: '220px', objectFit: 'cover', borderRadius: '12px', marginBottom: '20px' }}
-                      />
-                    )}
+                    <ArticleImage
+                      src={article.image_url}
+                      alt={article.title}
+                      style={{ width: '100%', height: i === 0 ? '220px' : '160px', objectFit: 'cover', borderRadius: '12px', marginBottom: '20px' }}
+                    />
                     <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
                       <span style={{ background: 'var(--dark)', color: 'white', fontSize: '0.7rem', fontWeight: 600, padding: '4px 10px', borderRadius: '100px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Horveil Pick</span>
                       <span style={{ background: 'var(--gold-pale)', color: 'var(--gold)', fontSize: '0.7rem', fontWeight: 500, padding: '4px 10px', borderRadius: '100px' }}>{article.source}</span>
