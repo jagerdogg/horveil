@@ -23,6 +23,7 @@ export default function AdminPage() {
   const [saving, setSaving] = useState<string | null>(null)
   const [suggesting, setSuggesting] = useState<string | null>(null)
   const [sending, setSending] = useState(false)
+  const [fetching, setFetching] = useState(false)
   const [takes, setTakes] = useState<Record<string, string>>({})
   const [newsletter, setNewsletter] = useState<Record<string, boolean>>({})
 
@@ -103,6 +104,21 @@ export default function AdminPage() {
     setSending(false)
   }
 
+  async function fetchNow() {
+    setFetching(true)
+    const res = await fetch('/api/fetch-feeds', {
+      headers: { 'Authorization': `Bearer ${process.env.NEXT_PUBLIC_CRON_SECRET}` },
+    })
+    const data = await res.json()
+    if (data.success) {
+      alert(`Fetched ${data.count} articles. Reloading...`)
+      loadArticles()
+    } else {
+      alert('Fetch failed.')
+    }
+    setFetching(false)
+  }
+
   const newsletterCount = Object.values(newsletter).filter(Boolean).length
 
   if (!authed) {
@@ -129,14 +145,21 @@ export default function AdminPage() {
   return (
     <div style={{ minHeight: '100vh', background: '#f5f4f0', padding: '32px 24px' }}>
       <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px', flexWrap: 'wrap', gap: '12px' }}>
           <div>
             <h1 style={{ fontFamily: 'Georgia, serif', fontSize: '1.8rem', color: '#1a1a18' }}>Horveil Admin</h1>
             <p style={{ color: '#6b6860', fontSize: '0.85rem', marginTop: '4px' }}>
               {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
             </p>
           </div>
-          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+            <button
+              onClick={fetchNow}
+              disabled={fetching}
+              style={{ padding: '8px 20px', borderRadius: '100px', background: '#3a3a38', color: 'white', fontWeight: 500, fontSize: '0.85rem', border: 'none', cursor: 'pointer' }}
+            >
+              {fetching ? 'Fetching...' : 'Fetch now'}
+            </button>
             <div style={{ background: newsletterCount === 5 ? '#2d5a27' : '#8B6F47', color: 'white', padding: '8px 16px', borderRadius: '100px', fontSize: '0.85rem', fontWeight: 500 }}>
               {newsletterCount}/5 newsletter
             </div>
