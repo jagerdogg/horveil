@@ -1,6 +1,9 @@
+import Navbar from '../components/Navbar'
+
 export default function About() {
   return (
     <main style={{ background: 'var(--background)', minHeight: '100vh' }}>
+      <Navbar />
       <div style={{ maxWidth: '680px', margin: '0 auto', padding: '72px 24px 96px' }}>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '48px' }}>
@@ -41,7 +44,7 @@ export default function About() {
           </p>
 
           <p style={{ marginBottom: '24px' }}>
-            Thirty years later I'd owned Rolex, Breitling, IWC, Panerai. I'd chased allocations and flipped pieces and convinced myself each new arrival was the one. I even owned a watch that by every objective measure should have been the grail. It made me feel like an imposter. I sold it.
+            Thirty years later I owned Rolex, Breitling, IWC, Panerai. I chased allocations and flipped pieces and convinced myself each new arrival was the one. I even owned a watch that by every objective measure should have been the grail. It made me feel like an imposter. I sold it.
           </p>
 
           <p style={{ marginBottom: '24px' }}>
@@ -49,15 +52,15 @@ export default function About() {
           </p>
 
           <p style={{ marginBottom: '24px' }}>
-            I built Horveil because I was spending an hour every morning reading watch sites and still missing half of what mattered. Five stories. One honest line each. That's it.
+            I built Horveil because I was spending an hour every morning reading watch sites and still missing half of what mattered. Five stories. One honest line each. That is it.
           </p>
 
           <p style={{ marginBottom: '24px' }}>
-            Watches aren't really about watches. They're about what you love when you stop trying to impress anyone. The life you carry on your wrist into an ordinary Wednesday.
+            Watches are not really about watches. They are about what you love when you stop trying to impress anyone. The life you carry on your wrist into an ordinary Wednesday.
           </p>
 
           <p style={{ marginBottom: '0' }}>
-            That's what this is about.
+            That is what this is about.
           </p>
 
         </div>
