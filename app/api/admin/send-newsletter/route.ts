@@ -8,9 +8,9 @@ const supabase = createClient(
 )
 
 function buildEmailHtml(articles: any[], date: string) {
-  const storiesHtml = articles.map((article, i) => `
+  const storiesHtml = articles.map((article) => `
     <div style="background: #fff; border-radius: 8px; border: 0.5px solid #E0DBD3; overflow: hidden; margin-bottom: 12px;">
-      ${i === 0 && article.image_url ? `
+      ${article.image_url ? `
         <div style="height: 180px; overflow: hidden;">
           <img src="${article.image_url}" alt="" style="width: 100%; height: 180px; object-fit: cover;" />
         </div>
@@ -66,11 +66,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
+  const since = new Date()
+  since.setHours(since.getHours() - 24)
+
   const { data: articles, error: articlesError } = await supabase
     .from('articles')
     .select('*')
     .eq('in_newsletter', true)
+    .gte('created_at', since.toISOString())
     .order('published_at', { ascending: false })
+    .limit(5)
 
   if (articlesError || !articles || articles.length === 0) {
     return NextResponse.json({ error: 'No newsletter articles selected' }, { status: 400 })
