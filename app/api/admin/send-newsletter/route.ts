@@ -40,6 +40,7 @@ function buildEmailHtml(articles: any[], date: string) {
           <div style="font-size: 13px; font-family: Georgia, serif; color: #1A1A1A; margin-bottom: 4px;">Hor<span style="color: #8B6914;">veil</span></div>
           <div style="font-size: 11px; color: #aaa; margin-bottom: 12px; letter-spacing: 1px; text-transform: uppercase;">watch culture, deeper</div>
           <div style="font-size: 11px; color: #bbb; margin-bottom: 6px;">You are receiving this because you signed up at horveil.com</div>
+          <div style="font-size: 11px; color: #bbb; margin-bottom: 12px;">Enjoying this? <a href="https://horveil.com" style="color: #8B6914; text-decoration: none;">Forward it to a friend</a> and let them sign up.</div>
           <div style="font-size: 11px;">
             <a href="${process.env.NEXT_PUBLIC_SITE_URL}/unsubscribe" style="color: #8B6914; text-decoration: none; margin: 0 8px;">Unsubscribe</a>
             <span style="color: #ddd;">·</span>
