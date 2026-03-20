@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 export default function Navbar() {
   return (
     <nav style={{
@@ -11,7 +13,7 @@ export default function Navbar() {
       top: 0,
       zIndex: 10,
     }}>
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px' }}>
+      <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'baseline', gap: '10px' }}>
         <span style={{
           fontFamily: 'Playfair Display, serif',
           fontSize: '22px',
@@ -29,34 +31,27 @@ export default function Navbar() {
         }}>
           watch culture, deeper
         </span>
-      </div>
+      </Link>
 
       <div style={{ display: 'flex', gap: '28px', alignItems: 'center' }}>
-        {['Feed', 'Releases', 'About'].map((link) => (
-          <button key={link} style={{
-            fontSize: '13px',
-            color: '#6b6860',
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            fontFamily: 'DM Sans, sans-serif',
-          }}>
-            {link}
-          </button>
-        ))}
-        <button style={{
+        <Link href="/" style={{ fontSize: '13px', color: '#6b6860', textDecoration: 'none', fontFamily: 'DM Sans, sans-serif' }}>
+          Feed
+        </Link>
+        <Link href="/about" style={{ fontSize: '13px', color: '#6b6860', textDecoration: 'none', fontFamily: 'DM Sans, sans-serif' }}>
+          About
+        </Link>
+        <Link href="/#subscribe" style={{
           fontSize: '13px',
           padding: '8px 20px',
           borderRadius: '100px',
           background: '#8B6F47',
           color: '#ffffff',
-          border: 'none',
-          cursor: 'pointer',
+          textDecoration: 'none',
           fontFamily: 'DM Sans, sans-serif',
           fontWeight: 500,
         }}>
           Get the newsletter
-        </button>
+        </Link>
       </div>
     </nav>
   )

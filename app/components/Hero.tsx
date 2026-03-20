@@ -9,13 +9,11 @@ export default function Hero() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setStatus('loading')
-
     const res = await fetch('/api/subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email }),
     })
-
     if (res.ok) {
       setStatus('success')
       setEmail('')
@@ -27,13 +25,29 @@ export default function Hero() {
   }
 
   return (
-    <section style={{ background: 'var(--dark)', color: 'white', padding: '80px 24px' }}>
-      <div style={{ maxWidth: '720px', margin: '0 auto', textAlign: 'center' }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2rem, 5vw, 3.5rem)', fontWeight: 500, lineHeight: 1.15, marginBottom: '24px' }}>
+    <section style={{ background: 'var(--dark)', color: 'white', padding: '96px 24px 80px', position: 'relative', overflow: 'hidden' }}>
+
+      <div style={{ maxWidth: '680px', margin: '0 auto', textAlign: 'center', position: 'relative' }}>
+
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '28px' }}>
+          <div style={{ height: '1px', width: '32px', background: 'var(--gold)' }} />
+          <span style={{ color: 'var(--gold)', fontSize: '0.72rem', letterSpacing: '0.15em', textTransform: 'uppercase', fontFamily: 'var(--font-body)' }}>watch culture, deeper</span>
+          <div style={{ height: '1px', width: '32px', background: 'var(--gold)' }} />
+        </div>
+
+        <h1 style={{
+          fontFamily: 'var(--font-display)',
+          fontSize: 'clamp(2.1rem, 5vw, 3.4rem)',
+          fontWeight: 400,
+          lineHeight: 1.18,
+          marginBottom: '24px',
+          letterSpacing: '-0.01em',
+        }}>
           Every story worth your time.<br />
-          <em style={{ color: 'var(--gold-light)' }}>One honest take each.</em>
+          <em style={{ color: 'var(--gold-light)', fontStyle: 'italic' }}>One honest take each.</em>
         </h1>
-        <p style={{ color: '#a09d96', fontSize: '1.1rem', marginBottom: '40px', maxWidth: '520px', margin: '0 auto 40px' }}>
+
+        <p style={{ color: '#857f78', fontSize: '1.05rem', lineHeight: 1.7, maxWidth: '460px', margin: '0 auto 40px' }}>
           Too many tabs. Not enough signal. Horveil is the fix. One email, five stories, Monday to Friday.
         </p>
 
@@ -42,7 +56,7 @@ export default function Hero() {
             Almost there. Check your inbox to confirm your spot.
           </p>
         ) : (
-          <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
             <input
               type="email"
               value={email}
@@ -50,16 +64,20 @@ export default function Hero() {
               placeholder="your@email.com"
               required
               style={{
-                padding: '14px 20px', borderRadius: '100px', border: '1px solid #3a3a38',
-                background: '#2a2a28', color: 'white', fontSize: '1rem', width: '280px', outline: 'none'
+                padding: '13px 22px', borderRadius: '100px',
+                border: '1px solid #2e2e2c',
+                background: 'rgba(255,255,255,0.05)',
+                color: 'white', fontSize: '0.95rem', width: '260px', outline: 'none',
               }}
             />
             <button
               type="submit"
               disabled={status === 'loading'}
               style={{
-                padding: '14px 28px', borderRadius: '100px', background: 'var(--gold)',
-                color: 'white', fontWeight: 500, fontSize: '1rem', border: 'none', cursor: 'pointer'
+                padding: '13px 28px', borderRadius: '100px',
+                background: 'var(--gold)', color: 'white',
+                fontWeight: 500, fontSize: '0.95rem',
+                border: 'none', cursor: 'pointer', letterSpacing: '0.01em',
               }}
             >
               {status === 'loading' ? 'Joining...' : 'Get the newsletter'}
@@ -68,17 +86,21 @@ export default function Hero() {
         )}
 
         {status === 'duplicate' && (
-          <p style={{ color: 'var(--gold-light)', marginTop: '12px', fontSize: '0.9rem' }}>You're already subscribed!</p>
+          <p style={{ color: 'var(--gold-light)', marginTop: '12px', fontSize: '0.875rem' }}>You're already subscribed.</p>
         )}
         {status === 'error' && (
-          <p style={{ color: '#e07070', marginTop: '12px', fontSize: '0.9rem' }}>Something went wrong. Try again.</p>
+          <p style={{ color: '#e07070', marginTop: '12px', fontSize: '0.875rem' }}>Something went wrong. Try again.</p>
         )}
 
-        <div style={{ display: 'flex', gap: '40px', justifyContent: 'center', marginTop: '48px', color: '#6b6860' }}>
-          <div><strong style={{ color: 'white', display: 'block', fontSize: '1.4rem' }}>Fresh</strong>every day</div>
-          <div><strong style={{ color: 'white', display: 'block', fontSize: '1.4rem' }}>5</strong>in your inbox</div>
-          <div><strong style={{ color: 'white', display: 'block', fontSize: '1.4rem' }}>1</strong>take each</div>
+        <div style={{ display: 'flex', gap: '48px', justifyContent: 'center', marginTop: '56px' }}>
+          {[['Fresh', 'every day'], ['5', 'in your inbox'], ['1', 'take each']].map(([val, label]) => (
+            <div key={label} style={{ textAlign: 'center' }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.6rem', fontWeight: 400, color: 'white', lineHeight: 1 }}>{val}</div>
+              <div style={{ fontSize: '0.78rem', color: '#6b6860', marginTop: '6px', letterSpacing: '0.05em' }}>{label}</div>
+            </div>
+          ))}
         </div>
+
       </div>
     </section>
   )
