@@ -10,11 +10,9 @@ const supabase = createClient(
 function buildEmailHtml(articles: any[], date: string) {
   const storiesHtml = articles.map((article) => `
     <div style="background: #fff; border-radius: 8px; border: 0.5px solid #E0DBD3; overflow: hidden; margin-bottom: 12px;">
-      ${article.image_url ? `
-        <div style="height: 180px; overflow: hidden;">
-          <img src="${article.image_url}" alt="" style="width: 100%; height: 180px; object-fit: cover;" />
-        </div>
-      ` : ''}
+      <div style="height: 180px; overflow: hidden;">
+        <img src="${article.image_url || 'https://horveil.com/placeholder-watch.svg'}" alt="" style="width: 100%; height: 180px; object-fit: cover; background: #1a1a18;" />
+      </div>
       <div style="padding: 16px 20px;">
         <div style="font-size: 11px; color: #8B6F47; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px;">${article.source}</div>
         <div style="font-size: 16px; font-weight: 500; color: #1A1A1A; font-family: Georgia, serif; line-height: 1.4; margin-bottom: 10px;">${article.title}</div>
