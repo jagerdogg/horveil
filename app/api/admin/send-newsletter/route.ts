@@ -95,7 +95,7 @@ export async function POST(request: Request) {
   const html = buildEmailHtml(articles, date)
 
   const { error: sendError } = await resend.emails.send({
-    from: 'Stephen at Horveil <onboarding@resend.dev>',
+    from: 'Stephen at Horveil <hello@horveil.com>',
     to: subscribers.map(s => s.email),
     subject: `Horveil · ${date}`,
     html,
