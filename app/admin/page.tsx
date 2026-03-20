@@ -62,15 +62,6 @@ export default function AdminPage() {
     setSubscriberCount(data.count)
   }
 
-  async function checkSentToday() {
-    const res = await fetch('/api/admin/send-newsletter', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password, checkOnly: true }),
-    })
-    if (res.status === 409) setAlreadySent(true)
-  }
-
   useEffect(() => {
     if (authed) {
       loadArticles()
@@ -107,21 +98,25 @@ export default function AdminPage() {
     setSuggesting(null)
   }
 
-  async function sendNewsletter(force = false) {
-    const confirmMsg = force
-      ? 'Force send newsletter (bypasses already-sent check)?'
+  async function sendNewsletter(force = false, test = false) {
+    const confirmMsg = test
+      ? 'Send a test newsletter to your test email?'
+      : force
+      ? 'Force send newsletter to all confirmed subscribers?'
       : 'Send newsletter to all confirmed subscribers?'
     if (!confirm(confirmMsg)) return
     setSending(true)
     const res = await fetch('/api/admin/send-newsletter', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password, force }),
+      body: JSON.stringify({ password, force, test }),
     })
     const data = await res.json()
     if (res.status === 409) {
       setAlreadySent(true)
       alert('Newsletter already sent today. Use Force Send to send again.')
+    } else if (data.success && data.test) {
+      alert('Test email sent to your test address.')
     } else if (data.success) {
       setAlreadySent(true)
       alert(`Sent to ${data.sent} subscriber${data.sent === 1 ? '' : 's'}.`)
@@ -200,9 +195,18 @@ export default function AdminPage() {
             <div style={{ background: newsletterCount === 5 ? '#2d5a27' : '#8B6F47', color: 'white', padding: '8px 16px', borderRadius: '100px', fontSize: '0.85rem', fontWeight: 500 }}>
               {newsletterCount}/5 newsletter
             </div>
+            {newsletterCount === 5 && (
+              <button
+                onClick={() => sendNewsletter(false, true)}
+                disabled={sending}
+                style={{ padding: '8px 20px', borderRadius: '100px', background: '#5a4a38', color: 'white', fontWeight: 500, fontSize: '0.85rem', border: 'none', cursor: 'pointer' }}
+              >
+                {sending ? 'Sending...' : 'Send test'}
+              </button>
+            )}
             {newsletterCount === 5 && !alreadySent && (
               <button
-                onClick={() => sendNewsletter(false)}
+                onClick={() => sendNewsletter(false, false)}
                 disabled={sending}
                 style={{ padding: '8px 20px', borderRadius: '100px', background: '#2d5a27', color: 'white', fontWeight: 500, fontSize: '0.85rem', border: 'none', cursor: 'pointer' }}
               >
@@ -211,7 +215,7 @@ export default function AdminPage() {
             )}
             {newsletterCount === 5 && alreadySent && (
               <button
-                onClick={() => sendNewsletter(true)}
+                onClick={() => sendNewsletter(true, false)}
                 disabled={sending}
                 style={{ padding: '8px 20px', borderRadius: '100px', background: '#8B4F47', color: 'white', fontWeight: 500, fontSize: '0.85rem', border: 'none', cursor: 'pointer' }}
               >

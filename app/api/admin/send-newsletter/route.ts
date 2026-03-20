@@ -54,24 +54,10 @@ function buildEmailHtml(articles: any[], date: string) {
 }
 
 export async function POST(request: Request) {
-  const { password, force } = await request.json()
+  const { password, force, test } = await request.json()
 
   if (password !== process.env.ADMIN_PASSWORD) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-
-  if (!force) {
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    const { data: todaySends } = await supabase
-      .from('newsletter_sends')
-      .select('id')
-      .gte('sent_at', today.toISOString())
-      .limit(1)
-
-    if (todaySends && todaySends.length > 0) {
-      return NextResponse.json({ error: 'Newsletter already sent today' }, { status: 409 })
-    }
   }
 
   const since = new Date()
@@ -89,6 +75,38 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'No newsletter articles selected' }, { status: 400 })
   }
 
+  const resend = new Resend(process.env.RESEND_API_KEY)
+  const date = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
+  const html = buildEmailHtml(articles, date)
+
+  if (test) {
+    const testEmail = process.env.HORVEIL_TEST_EMAIL
+    if (!testEmail) {
+      return NextResponse.json({ error: 'No test email configured' }, { status: 500 })
+    }
+    await resend.emails.send({
+      from: 'Stephen at Horveil <hello@horveil.com>',
+      to: testEmail,
+      subject: `[TEST] Horveil · ${date}`,
+      html,
+    })
+    return NextResponse.json({ success: true, sent: 1, test: true })
+  }
+
+  if (!force) {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const { data: todaySends } = await supabase
+      .from('newsletter_sends')
+      .select('id')
+      .gte('sent_at', today.toISOString())
+      .limit(1)
+
+    if (todaySends && todaySends.length > 0) {
+      return NextResponse.json({ error: 'Newsletter already sent today' }, { status: 409 })
+    }
+  }
+
   const { data: subscribers, error: subsError } = await supabase
     .from('subscribers')
     .select('email')
@@ -97,10 +115,6 @@ export async function POST(request: Request) {
   if (subsError || !subscribers || subscribers.length === 0) {
     return NextResponse.json({ error: 'No confirmed subscribers' }, { status: 400 })
   }
-
-  const resend = new Resend(process.env.RESEND_API_KEY)
-  const date = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
-  const html = buildEmailHtml(articles, date)
 
   const { error: sendError } = await resend.batch.send(
     subscribers.map(s => ({
