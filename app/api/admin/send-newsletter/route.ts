@@ -66,6 +66,20 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
+  // Check if already sent today
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  const { data: todaySends } = await supabase
+    .from('newsletter_sends')
+    .select('id')
+    .gte('sent_at', today.toISOString())
+    .limit(1)
+
+  if (todaySends && todaySends.length > 0) {
+    return NextResponse.json({ error: 'Newsletter already sent today' }, { status: 409 })
+  }
+
   const since = new Date()
   since.setHours(since.getHours() - 24)
 
@@ -104,6 +118,11 @@ export async function POST(request: Request) {
   if (sendError) {
     return NextResponse.json({ error: sendError.message }, { status: 500 })
   }
+
+  // Log the send
+  await supabase
+    .from('newsletter_sends')
+    .insert([{ subscriber_count: subscribers.length }])
 
   return NextResponse.json({ success: true, sent: subscribers.length })
 }

@@ -96,7 +96,9 @@ export default function AdminPage() {
       body: JSON.stringify({ password }),
     })
     const data = await res.json()
-    if (data.success) {
+    if (res.status === 409) {
+      alert('Newsletter already sent today.')
+    } else if (data.success) {
       alert(`Sent to ${data.sent} subscriber${data.sent === 1 ? '' : 's'}.`)
     } else {
       alert(`Error: ${data.error}`)
