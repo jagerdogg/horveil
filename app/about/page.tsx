@@ -1,7 +1,6 @@
 export default function About() {
   return (
     <main style={{ background: 'var(--background)', minHeight: '100vh' }}>
-
       <div style={{ maxWidth: '680px', margin: '0 auto', padding: '72px 24px 96px' }}>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '48px' }}>
@@ -15,15 +14,26 @@ export default function About() {
           <em style={{ color: 'var(--gold)' }}>into an ordinary Wednesday.</em>
         </h1>
 
-        {/* Photo placeholder */}
-        <div style={{ width: '100%', height: '320px', background: '#ece9e2', borderRadius: '18px', marginBottom: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <p style={{ color: 'var(--subtle)', fontFamily: 'var(--font-display)', fontStyle: 'italic', fontSize: '0.9rem' }}>Your photo goes here</p>
-        </div>
-
         <div style={{ fontFamily: 'var(--font-body)', fontSize: '1.05rem', lineHeight: 1.85, color: '#3a3a38' }}>
 
+          <img
+            src="/stephen.jpg"
+            alt="Stephen, founder of Horveil"
+            style={{
+              float: 'right',
+              width: '190px',
+              height: '190px',
+              objectFit: 'cover',
+              objectPosition: '60% 0%',
+              borderRadius: '50%',
+              border: '3px solid var(--gold)',
+              marginLeft: '32px',
+              marginBottom: '16px',
+            }}
+          />
+
           <p style={{ marginBottom: '24px' }}>
-            I grew up in the late eighties obsessed with watches. Not in any sophisticated way : LEDs, LCDs, anything that felt like the future strapped to a wrist. James Bond didn't help.
+            I grew up in the late eighties obsessed with watches. Not in any sophisticated way, LEDs, LCDs, anything that felt like the future strapped to a wrist. James Bond didn't help.
           </p>
 
           <p style={{ marginBottom: '24px' }}>
@@ -42,7 +52,7 @@ export default function About() {
             I built Horveil because I was spending an hour every morning reading watch sites and still missing half of what mattered. Five stories. One honest line each. That's it.
           </p>
 
-          <p style={{ marginBottom: '48px' }}>
+          <p style={{ marginBottom: '24px' }}>
             Watches aren't really about watches. They're about what you love when you stop trying to impress anyone. The life you carry on your wrist into an ordinary Wednesday.
           </p>
 
@@ -52,7 +62,7 @@ export default function About() {
 
         </div>
 
-        <div style={{ borderTop: '1px solid var(--border)', marginTop: '48px', paddingTop: '32px' }}>
+        <div style={{ borderTop: '1px solid var(--border)', marginTop: '48px', paddingTop: '32px', clear: 'both' }}>
           <p style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', color: 'var(--foreground)', marginBottom: '4px' }}>
             <strong>Stephen</strong> · Essex, Ontario
           </p>
