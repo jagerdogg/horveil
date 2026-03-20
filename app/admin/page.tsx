@@ -24,6 +24,8 @@ export default function AdminPage() {
   const [suggesting, setSuggesting] = useState<string | null>(null)
   const [sending, setSending] = useState(false)
   const [fetching, setFetching] = useState(false)
+  const [subscriberCount, setSubscriberCount] = useState<number | null>(null)
+  const [alreadySent, setAlreadySent] = useState(false)
   const [takes, setTakes] = useState<Record<string, string>>({})
   const [newsletter, setNewsletter] = useState<Record<string, boolean>>({})
 
@@ -54,8 +56,26 @@ export default function AdminPage() {
     setLoading(false)
   }
 
+  async function loadStats() {
+    const res = await fetch('/api/admin/stats')
+    const data = await res.json()
+    setSubscriberCount(data.count)
+  }
+
+  async function checkSentToday() {
+    const res = await fetch('/api/admin/send-newsletter', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password, checkOnly: true }),
+    })
+    if (res.status === 409) setAlreadySent(true)
+  }
+
   useEffect(() => {
-    if (authed) loadArticles()
+    if (authed) {
+      loadArticles()
+      loadStats()
+    }
   }, [authed])
 
   async function save(id: string) {
@@ -87,18 +107,23 @@ export default function AdminPage() {
     setSuggesting(null)
   }
 
-  async function sendNewsletter() {
-    if (!confirm('Send newsletter to all confirmed subscribers?')) return
+  async function sendNewsletter(force = false) {
+    const confirmMsg = force
+      ? 'Force send newsletter (bypasses already-sent check)?'
+      : 'Send newsletter to all confirmed subscribers?'
+    if (!confirm(confirmMsg)) return
     setSending(true)
     const res = await fetch('/api/admin/send-newsletter', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password }),
+      body: JSON.stringify({ password, force }),
     })
     const data = await res.json()
     if (res.status === 409) {
-      alert('Newsletter already sent today.')
+      setAlreadySent(true)
+      alert('Newsletter already sent today. Use Force Send to send again.')
     } else if (data.success) {
+      setAlreadySent(true)
       alert(`Sent to ${data.sent} subscriber${data.sent === 1 ? '' : 's'}.`)
     } else {
       alert(`Error: ${data.error}`)
@@ -153,6 +178,16 @@ export default function AdminPage() {
             <p style={{ color: '#6b6860', fontSize: '0.85rem', marginTop: '4px' }}>
               {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
             </p>
+            {subscriberCount !== null && (
+              <p style={{ color: '#8B6F47', fontSize: '0.85rem', marginTop: '4px', fontWeight: 500 }}>
+                {subscriberCount} confirmed subscriber{subscriberCount === 1 ? '' : 's'}
+              </p>
+            )}
+            {alreadySent && (
+              <p style={{ color: '#2d5a27', fontSize: '0.85rem', marginTop: '4px', fontWeight: 500 }}>
+                Newsletter sent today
+              </p>
+            )}
           </div>
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
             <button
@@ -165,13 +200,22 @@ export default function AdminPage() {
             <div style={{ background: newsletterCount === 5 ? '#2d5a27' : '#8B6F47', color: 'white', padding: '8px 16px', borderRadius: '100px', fontSize: '0.85rem', fontWeight: 500 }}>
               {newsletterCount}/5 newsletter
             </div>
-            {newsletterCount === 5 && (
+            {newsletterCount === 5 && !alreadySent && (
               <button
-                onClick={sendNewsletter}
+                onClick={() => sendNewsletter(false)}
                 disabled={sending}
                 style={{ padding: '8px 20px', borderRadius: '100px', background: '#2d5a27', color: 'white', fontWeight: 500, fontSize: '0.85rem', border: 'none', cursor: 'pointer' }}
               >
                 {sending ? 'Sending...' : 'Send newsletter'}
+              </button>
+            )}
+            {newsletterCount === 5 && alreadySent && (
+              <button
+                onClick={() => sendNewsletter(true)}
+                disabled={sending}
+                style={{ padding: '8px 20px', borderRadius: '100px', background: '#8B4F47', color: 'white', fontWeight: 500, fontSize: '0.85rem', border: 'none', cursor: 'pointer' }}
+              >
+                {sending ? 'Sending...' : 'Force send'}
               </button>
             )}
           </div>

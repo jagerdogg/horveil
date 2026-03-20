@@ -29,19 +29,15 @@ function buildEmailHtml(articles: any[], date: string) {
   return `
     <div style="background: #F9F7F4; padding: 2rem 1rem; font-family: Arial, sans-serif;">
       <div style="max-width: 600px; margin: 0 auto; background: #F9F7F4;">
-
         <div style="text-align: center; padding: 2rem 0 1.5rem;">
           <div style="font-size: 26px; font-weight: 500; letter-spacing: -0.5px; color: #1A1A1A; font-family: Georgia, serif;">Hor<span style="color: #8B6914;">veil</span></div>
           <div style="font-size: 12px; color: #888; letter-spacing: 2px; text-transform: uppercase; margin-top: 4px;">watch culture, deeper</div>
           <div style="width: 40px; height: 1px; background: #8B6914; margin: 14px auto 0;"></div>
         </div>
-
         <div style="text-align: center; padding: 0 0 1.5rem;">
           <div style="font-size: 13px; color: #888;">${date} · Five stories worth your time</div>
         </div>
-
         ${storiesHtml}
-
         <div style="border-top: 0.5px solid #E0DBD3; margin-top: 2rem; padding-top: 1.5rem; text-align: center;">
           <div style="font-size: 13px; font-family: Georgia, serif; color: #1A1A1A; margin-bottom: 4px;">Hor<span style="color: #8B6914;">veil</span></div>
           <div style="font-size: 11px; color: #aaa; margin-bottom: 12px; letter-spacing: 1px; text-transform: uppercase;">watch culture, deeper</div>
@@ -53,31 +49,30 @@ function buildEmailHtml(articles: any[], date: string) {
           </div>
           <div style="font-size: 11px; color: #ccc; margin-top: 12px;">© 2026 Horveil</div>
         </div>
-
       </div>
     </div>
   `
 }
 
 export async function POST(request: Request) {
-  const { password } = await request.json()
+  const { password, force } = await request.json()
 
   if (password !== process.env.ADMIN_PASSWORD) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  // Check if already sent today
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
+  if (!force) {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const { data: todaySends } = await supabase
+      .from('newsletter_sends')
+      .select('id')
+      .gte('sent_at', today.toISOString())
+      .limit(1)
 
-  const { data: todaySends } = await supabase
-    .from('newsletter_sends')
-    .select('id')
-    .gte('sent_at', today.toISOString())
-    .limit(1)
-
-  if (todaySends && todaySends.length > 0) {
-    return NextResponse.json({ error: 'Newsletter already sent today' }, { status: 409 })
+    if (todaySends && todaySends.length > 0) {
+      return NextResponse.json({ error: 'Newsletter already sent today' }, { status: 409 })
+    }
   }
 
   const since = new Date()
@@ -119,7 +114,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: sendError.message }, { status: 500 })
   }
 
-  // Log the send
   await supabase
     .from('newsletter_sends')
     .insert([{ subscriber_count: subscribers.length }])

@@ -15,6 +15,25 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Email is required' }, { status: 400 })
   }
 
+  // Check if already exists
+  const { data: existing } = await supabase
+    .from('subscribers')
+    .select('confirmed')
+    .eq('email', email)
+    .single()
+
+  if (existing) {
+    if (existing.confirmed) {
+      return NextResponse.json({ error: 'Already subscribed' }, { status: 409 })
+    } else {
+      // Unconfirmed — delete and let them re-subscribe
+      await supabase
+        .from('subscribers')
+        .delete()
+        .eq('email', email)
+    }
+  }
+
   const token = randomUUID()
 
   const { error } = await supabase
@@ -22,9 +41,6 @@ export async function POST(request: Request) {
     .insert([{ email, confirmation_token: token, confirmed: false }])
 
   if (error) {
-    if (error.code === '23505') {
-      return NextResponse.json({ error: 'Already subscribed' }, { status: 409 })
-    }
     return NextResponse.json({ error: 'Something went wrong' }, { status: 500 })
   }
 
@@ -47,7 +63,7 @@ export async function POST(request: Request) {
           Confirm subscription
         </a>
         <p style="color: #9e9b94; font-size: 0.8rem; margin-top: 48px;">
-          If you didn't sign up for Horveil, you can safely ignore this email.
+          If you did not sign up for Horveil, you can safely ignore this email.
         </p>
       </div>
     `
