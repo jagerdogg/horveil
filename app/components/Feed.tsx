@@ -55,13 +55,12 @@ export default async function Feed() {
     <section style={{ maxWidth: '1100px', margin: '0 auto', padding: '48px 24px' }}>
       <div style={{ display: 'flex', gap: '48px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
 
-        {/* Main feed */}
         <div style={{ flex: '1 1 500px', minWidth: 0 }}>
 
           {newsletter.length > 0 && (
             <>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
-                <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', fontWeight: 500 }}>Today\'s Picks</h2>
+                <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', fontWeight: 500 }}>Today's Picks</h2>
                 <span style={{ background: 'var(--gold)', color: 'white', fontSize: '0.75rem', fontWeight: 500, padding: '4px 10px', borderRadius: '100px' }}>
                   {newsletter.length} curated
                 </span>
@@ -82,7 +81,9 @@ export default async function Feed() {
                     <h3 style={{ fontFamily: 'var(--font-display)', fontSize: i === 0 ? '1.3rem' : '1.05rem', fontWeight: 500, lineHeight: 1.3, marginBottom: '12px' }}>{article.title}</h3>
                     {article.horveil_take && (
                       <div style={{ borderLeft: '3px solid var(--gold)', paddingLeft: '14px' }}>
-                        <p style={{ fontStyle: 'italic', color: 'var(--gold)', fontSize: '0.95rem' }}>"{article.horveil_take}"</p>
+                        <p style={{ fontStyle: 'italic', color: 'var(--gold)', fontSize: '0.95rem' }}>
+                          "{article.horveil_take}" <span style={{ fontStyle: 'normal', fontSize: '0.8rem', color: 'var(--subtle)' }}>— S</span>
+                        </p>
                       </div>
                     )}
                   </div>
@@ -113,6 +114,13 @@ export default async function Feed() {
                         <span style={{ background: 'var(--gold-pale)', color: 'var(--gold)', fontSize: '0.7rem', fontWeight: 500, padding: '3px 8px', borderRadius: '100px' }}>{article.source}</span>
                       </div>
                       <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', fontWeight: 500, lineHeight: 1.35 }}>{article.title}</h3>
+                      {article.horveil_take && (
+                        <div style={{ borderLeft: '3px solid var(--gold)', paddingLeft: '10px', marginTop: '8px' }}>
+                          <p style={{ fontStyle: 'italic', color: 'var(--gold)', fontSize: '0.85rem' }}>
+                            "{article.horveil_take}" <span style={{ fontStyle: 'normal', fontSize: '0.75rem', color: 'var(--subtle)' }}>— S</span>
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </a>
@@ -122,7 +130,7 @@ export default async function Feed() {
 
           {newsletter.length === 0 && rest.length > 0 && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
-              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', fontWeight: 500 }}>Today\'s Feed</h2>
+              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', fontWeight: 500 }}>Today's Feed</h2>
               <span style={{ background: 'var(--gold-pale)', color: 'var(--gold)', fontSize: '0.75rem', fontWeight: 500, padding: '4px 10px', borderRadius: '100px' }}>
                 {rest.length} stories
               </span>
@@ -131,7 +139,6 @@ export default async function Feed() {
 
         </div>
 
-        {/* Sidebar */}
         <div style={{ width: '280px', flexShrink: 0, flex: '0 1 280px' }}>
 
           <SidebarSignup />
