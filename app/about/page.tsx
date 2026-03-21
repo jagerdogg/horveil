@@ -62,7 +62,7 @@ export default function About() {
 
         <div style={{ borderTop: '1px solid var(--border)', marginTop: '48px', paddingTop: '32px', clear: 'both' }}>
           <p style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', color: 'var(--foreground)', marginBottom: '4px' }}>
-            <strong>Stephen</strong> · Essex, Ontario
+            <strong>Stephen</strong> · Ontario, Canada
           </p>
           <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.85rem', color: 'var(--muted)', fontStyle: 'italic' }}>
             Currently wearing: Seiko Marine Master
