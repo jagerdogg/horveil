@@ -97,7 +97,7 @@ export default function Hero() {
         </p>
 
         <div style={{ display: 'flex', gap: '48px', justifyContent: 'center', marginTop: '56px' }}>
-          {[['5', 'stories daily'], ['1', 'honest take each'], ['Always', 'free']].map(([val, label]) => (
+          {[['5', 'stories daily'], ['1', 'honest take each'], ['Free', 'always']].map(([val, label]) => (
             <div key={label} style={{ textAlign: 'center' }}>
               <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.6rem', fontWeight: 400, color: 'white', lineHeight: 1 }}>{val}</div>
               <div style={{ fontSize: '0.78rem', color: '#6b6860', marginTop: '6px', letterSpacing: '0.05em' }}>{label}</div>
