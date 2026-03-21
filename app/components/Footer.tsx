@@ -4,7 +4,6 @@ export default function Footer() {
       <div style={{ marginBottom: '10px', display: 'flex', gap: '24px', justifyContent: 'center', flexWrap: 'wrap' }}>
         <a href="/about" style={{ color: '#555', textDecoration: 'none', fontSize: '12px' }}>About</a>
         <a href="/privacy" style={{ color: '#555', textDecoration: 'none', fontSize: '12px' }}>Privacy</a>
-        <a href="mailto:hello@horveil.com" style={{ color: '#555', textDecoration: 'none', fontSize: '12px' }}>Contact</a>
       </div>
       <div>
         © 2026 <span style={{ color: '#8B6F47' }}>Horveil</span> · Watch culture, deeper · Built for enthusiasts, by one.
