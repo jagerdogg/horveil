@@ -7,11 +7,14 @@ const supabase = createClient(
 )
 
 const FEEDS = [
+  { url: 'https://feeds.feedburner.com/hodinkee', source: 'Hodinkee' },
   { url: 'https://www.fratellowatches.com/feed/', source: 'Fratello' },
   { url: 'https://www.ablogtowatch.com/feed/', source: 'aBlogtoWatch' },
   { url: 'https://monochrome-watches.com/feed/', source: 'Monochrome' },
   { url: 'https://wornandwound.com/feed/', source: 'Worn & Wound' },
   { url: 'https://revolutionwatch.com/feed/', source: 'Revolution' },
+  { url: 'https://twobrokewatchsnobs.com/feed/', source: 'Two Broke Watch Snobs' },
+  { url: 'https://timeandtidewatches.com/feed/', source: 'Time+Tide' },
 ]
 
 function extractTag(xml: string, tag: string): string {
@@ -92,7 +95,6 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  // Clear all newsletter flags before fetching fresh articles
   await supabase
     .from('articles')
     .update({ in_newsletter: false, featured: false })

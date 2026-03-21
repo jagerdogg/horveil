@@ -135,11 +135,14 @@ export default async function Feed() {
           <div style={{ background: 'white', borderRadius: '18px', border: '1px solid var(--border)', padding: '24px', marginTop: '16px' }}>
             <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', fontWeight: 500, marginBottom: '16px' }}>Sources</h3>
             {[
+              { name: 'Hodinkee', url: 'https://www.hodinkee.com' },
               { name: 'Fratello', url: 'https://www.fratellowatches.com' },
               { name: 'aBlogtoWatch', url: 'https://www.ablogtowatch.com' },
               { name: 'Monochrome', url: 'https://monochrome-watches.com' },
               { name: 'Worn & Wound', url: 'https://wornandwound.com' },
               { name: 'Revolution', url: 'https://revolutionwatch.com' },
+              { name: 'Two Broke Watch Snobs', url: 'https://twobrokewatchsnobs.com' },
+              { name: 'Time+Tide', url: 'https://timeandtidewatches.com' },
             ].map(source => (
               <a key={source.name} href={source.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
                 <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--gold)', flexShrink: 0 }} />
