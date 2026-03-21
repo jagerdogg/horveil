@@ -17,7 +17,7 @@ function buildEmailHtml(articles: any[], date: string) {
         <div style="font-size: 11px; color: #8B6F47; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px;">${article.source}</div>
         <div style="font-size: 16px; font-weight: 500; color: #1A1A1A; font-family: Georgia, serif; line-height: 1.4; margin-bottom: 10px;">${article.title}</div>
         ${article.horveil_take ? `
-          <div style="font-size: 13px; color: #8B6F47; font-style: italic; line-height: 1.5; border-left: 2px solid #8B6F47; padding-left: 10px; margin-bottom: 12px;">"${article.horveil_take}" <span style="font-style: normal; font-size: 11px; color: #9e9b94;">— S</span></div>
+          <div style="font-size: 13px; color: #8B6F47; font-style: italic; line-height: 1.5; border-left: 2px solid #8B6F47; padding-left: 10px; margin-bottom: 12px;">"${article.horveil_take} — S"</div>
         ` : ''}
         <a href="${article.url}" style="font-size: 12px; color: #8B6F47; text-decoration: none; letter-spacing: 0.5px;">Read the full story</a>
       </div>
