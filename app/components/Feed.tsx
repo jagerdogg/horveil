@@ -1,5 +1,6 @@
 import { supabase } from '../../lib/supabase'
 import ArticleImage from './ArticleImage'
+import SidebarSignup from './SidebarSignup'
 
 export const revalidate = 0
 
@@ -48,8 +49,6 @@ export default async function Feed() {
 
   return (
     <section style={{ maxWidth: '1100px', margin: '0 auto', padding: '48px 24px' }}>
-
-      {/* Mobile: stack, Desktop: side by side */}
       <div style={{ display: 'flex', gap: '48px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
 
         {/* Main feed */}
@@ -130,23 +129,26 @@ export default async function Feed() {
 
         {/* Sidebar */}
         <div style={{ width: '280px', flexShrink: 0, flex: '0 1 280px' }}>
-          <div style={{ background: 'var(--dark)', borderRadius: '18px', padding: '28px', marginBottom: '16px' }}>
-            <h3 style={{ fontFamily: 'var(--font-display)', color: 'white', fontSize: '1.1rem', marginBottom: '8px' }}>Get the daily digest</h3>
-            <p style={{ color: '#9e9b94', fontSize: '0.85rem', marginBottom: '16px' }}>5 stories, one take each. Monday to Friday.</p>
-            <a href="#" style={{ display: 'block', background: 'var(--gold)', color: 'white', textAlign: 'center', padding: '12px', borderRadius: '100px', fontWeight: 500, fontSize: '0.9rem', textDecoration: 'none' }}>Subscribe free</a>
-          </div>
 
-          <div style={{ background: 'white', borderRadius: '18px', border: '1px solid var(--border)', padding: '24px' }}>
+          <SidebarSignup />
+
+          <div style={{ background: 'white', borderRadius: '18px', border: '1px solid var(--border)', padding: '24px', marginTop: '16px' }}>
             <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', fontWeight: 500, marginBottom: '16px' }}>Sources</h3>
-            {['Fratello', 'aBlogtoWatch', 'Monochrome', 'Worn & Wound', 'Revolution'].map(source => (
-              <div key={source} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--gold)' }} />
-                <span style={{ fontSize: '0.85rem', color: 'var(--muted)' }}>{source}</span>
-              </div>
+            {[
+              { name: 'Fratello', url: 'https://www.fratellowatches.com' },
+              { name: 'aBlogtoWatch', url: 'https://www.ablogtowatch.com' },
+              { name: 'Monochrome', url: 'https://monochrome-watches.com' },
+              { name: 'Worn & Wound', url: 'https://wornandwound.com' },
+              { name: 'Revolution', url: 'https://revolutionwatch.com' },
+            ].map(source => (
+              <a key={source.name} href={source.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--gold)', flexShrink: 0 }} />
+                <span style={{ fontSize: '0.85rem', color: 'var(--muted)' }}>{source.name}</span>
+              </a>
             ))}
           </div>
-        </div>
 
+        </div>
       </div>
     </section>
   )
