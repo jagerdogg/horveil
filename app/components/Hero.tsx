@@ -84,9 +84,7 @@ export default function Hero() {
             </button>
           </form>
         )}
-        <p style={{ color: '#6b6860', fontSize: '0.75rem', marginTop: '10px', textAlign: 'center' }}>
-          No spam. No tracking. Unsubscribe anytime.
-        </p>
+
         {status === 'duplicate' && (
           <p style={{ color: 'var(--gold-light)', marginTop: '12px', fontSize: '0.875rem' }}>You're already subscribed.</p>
         )}
@@ -94,7 +92,18 @@ export default function Hero() {
           <p style={{ color: '#e07070', marginTop: '12px', fontSize: '0.875rem' }}>Something went wrong. Try again.</p>
         )}
 
+        <p style={{ color: '#6b6860', fontSize: '0.75rem', marginTop: '10px', textAlign: 'center' }}>
+          No spam. No tracking. Unsubscribe anytime.
+        </p>
 
+        <div style={{ display: 'flex', gap: '48px', justifyContent: 'center', marginTop: '56px' }}>
+          {[['5', 'stories daily'], ['1', 'honest take each'], ['Always', 'free']].map(([val, label]) => (
+            <div key={label} style={{ textAlign: 'center' }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.6rem', fontWeight: 400, color: 'white', lineHeight: 1 }}>{val}</div>
+              <div style={{ fontSize: '0.78rem', color: '#6b6860', marginTop: '6px', letterSpacing: '0.05em' }}>{label}</div>
+            </div>
+          ))}
+        </div>
 
       </div>
     </section>
