@@ -86,7 +86,7 @@ export async function POST(request: Request) {
     }
     await resend.emails.send({
       from: 'Stephen at Horveil <hello@horveil.com>',
-      reply_to: 'stephen.horveil@gmail.com',
+      replyTo: 'stephen.horveil@gmail.com',
       to: testEmail,
       subject: `[TEST] Horveil · ${date}`,
       html,
@@ -120,7 +120,7 @@ export async function POST(request: Request) {
   const { error: sendError } = await resend.batch.send(
     subscribers.map(s => ({
       from: 'Stephen at Horveil <hello@horveil.com>',
-      reply_to: 'stephen.horveil@gmail.com',
+      replyTo: 'stephen.horveil@gmail.com',
       to: s.email,
       subject: `Horveil · ${date}`,
       html,
