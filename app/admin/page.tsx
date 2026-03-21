@@ -21,9 +21,11 @@ export default function AdminPage() {
   const [articles, setArticles] = useState<Article[]>([])
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState<string | null>(null)
+  const [saved, setSaved] = useState<string | null>(null)
   const [suggesting, setSuggesting] = useState<string | null>(null)
   const [sending, setSending] = useState(false)
   const [fetching, setFetching] = useState(false)
+  const [clearing, setClearing] = useState(false)
   const [subscriberCount, setSubscriberCount] = useState<number | null>(null)
   const [alreadySent, setAlreadySent] = useState(false)
   const [takes, setTakes] = useState<Record<string, string>>({})
@@ -69,7 +71,23 @@ export default function AdminPage() {
     }
   }, [authed])
 
-  async function save(id: string) {
+  async function toggleNewsletter(id: string, checked: boolean) {
+    const newsletterCount = Object.values(newsletter).filter(Boolean).length
+    if (checked && newsletterCount >= 5) return
+    setNewsletter(prev => ({ ...prev, [id]: checked }))
+    await fetch('/api/admin/update', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id,
+        horveil_take: takes[id] || null,
+        in_newsletter: checked,
+        featured: checked,
+      }),
+    })
+  }
+
+  async function saveTake(id: string) {
     setSaving(id)
     await fetch('/api/admin/update', {
       method: 'POST',
@@ -82,6 +100,8 @@ export default function AdminPage() {
       }),
     })
     setSaving(null)
+    setSaved(id)
+    setTimeout(() => setSaved(null), 2000)
   }
 
   async function suggestTake(article: Article) {
@@ -141,6 +161,22 @@ export default function AdminPage() {
     setFetching(false)
   }
 
+  async function clearPicks() {
+    if (!confirm('Clear all newsletter picks?')) return
+    setClearing(true)
+    await fetch('/api/admin/clear-picks', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password }),
+    })
+    setNewsletter(prev => {
+      const cleared: Record<string, boolean> = {}
+      Object.keys(prev).forEach(k => cleared[k] = false)
+      return cleared
+    })
+    setClearing(false)
+  }
+
   const newsletterCount = Object.values(newsletter).filter(Boolean).length
 
   if (!authed) {
@@ -175,7 +211,7 @@ export default function AdminPage() {
             </p>
             {subscriberCount !== null && (
               <p style={{ color: '#8B6F47', fontSize: '0.85rem', marginTop: '4px', fontWeight: 500 }}>
-                {subscriberCount} confirmed subscriber{subscriberCount === 1 ? '' : 's'}
+                {subscriberCount} confirmed subscriber{subscriberCount === 1 ? '' : 's'} · {articles.length} articles today
               </p>
             )}
             {alreadySent && (
@@ -191,6 +227,13 @@ export default function AdminPage() {
               style={{ padding: '8px 20px', borderRadius: '100px', background: '#3a3a38', color: 'white', fontWeight: 500, fontSize: '0.85rem', border: 'none', cursor: 'pointer' }}
             >
               {fetching ? 'Fetching...' : 'Fetch now'}
+            </button>
+            <button
+              onClick={clearPicks}
+              disabled={clearing || newsletterCount === 0}
+              style={{ padding: '8px 20px', borderRadius: '100px', background: newsletterCount === 0 ? '#ccc' : '#c0392b', color: 'white', fontWeight: 500, fontSize: '0.85rem', border: 'none', cursor: newsletterCount === 0 ? 'default' : 'pointer' }}
+            >
+              {clearing ? 'Clearing...' : 'Clear picks'}
             </button>
             <div style={{ background: newsletterCount === 5 ? '#2d5a27' : '#8B6F47', color: 'white', padding: '8px 16px', borderRadius: '100px', fontSize: '0.85rem', fontWeight: 500 }}>
               {newsletterCount}/5 newsletter
@@ -256,10 +299,7 @@ export default function AdminPage() {
                       <input
                         type="checkbox"
                         checked={newsletter[article.id] || false}
-                        onChange={e => {
-                          if (e.target.checked && newsletterCount >= 5) return
-                          setNewsletter(prev => ({ ...prev, [article.id]: e.target.checked }))
-                        }}
+                        onChange={e => toggleNewsletter(article.id, e.target.checked)}
                       />
                       Newsletter
                     </label>
@@ -271,11 +311,11 @@ export default function AdminPage() {
                       {suggesting === article.id ? 'Thinking...' : '✦ Suggest'}
                     </button>
                     <button
-                      onClick={() => save(article.id)}
+                      onClick={() => saveTake(article.id)}
                       disabled={saving === article.id}
-                      style={{ marginLeft: 'auto', padding: '8px 20px', borderRadius: '100px', background: '#8B6F47', color: 'white', fontWeight: 500, fontSize: '0.85rem', border: 'none', cursor: 'pointer' }}
+                      style={{ marginLeft: 'auto', padding: '8px 20px', borderRadius: '100px', background: saved === article.id ? '#2d5a27' : '#8B6F47', color: 'white', fontWeight: 500, fontSize: '0.85rem', border: 'none', cursor: 'pointer', transition: 'background 0.2s' }}
                     >
-                      {saving === article.id ? 'Saving...' : 'Save'}
+                      {saving === article.id ? 'Saving...' : saved === article.id ? 'Saved' : 'Save take'}
                     </button>
                   </div>
                 </div>
