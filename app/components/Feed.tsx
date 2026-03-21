@@ -19,18 +19,22 @@ interface Article {
 }
 
 async function getArticles(): Promise<Article[]> {
-  const { data, error } = await supabase
+  const { data: newsletterArticles } = await supabase
     .from('articles')
     .select('*')
+    .eq('in_newsletter', true)
+    .order('published_at', { ascending: false })
+
+  const { data: recentArticles } = await supabase
+    .from('articles')
+    .select('*')
+    .eq('in_newsletter', false)
     .order('published_at', { ascending: false })
     .limit(20)
 
-  if (error) {
-    console.error('Error fetching articles:', error)
-    return []
-  }
+  if (!newsletterArticles && !recentArticles) return []
 
-  return data || []
+  return [...(newsletterArticles || []), ...(recentArticles || [])]
 }
 
 export default async function Feed() {
@@ -57,7 +61,7 @@ export default async function Feed() {
           {newsletter.length > 0 && (
             <>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
-                <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', fontWeight: 500 }}>Today's Picks</h2>
+                <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', fontWeight: 500 }}>Today\'s Picks</h2>
                 <span style={{ background: 'var(--gold)', color: 'white', fontSize: '0.75rem', fontWeight: 500, padding: '4px 10px', borderRadius: '100px' }}>
                   {newsletter.length} curated
                 </span>
@@ -118,7 +122,7 @@ export default async function Feed() {
 
           {newsletter.length === 0 && rest.length > 0 && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
-              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', fontWeight: 500 }}>Today's Feed</h2>
+              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', fontWeight: 500 }}>Today\'s Feed</h2>
               <span style={{ background: 'var(--gold-pale)', color: 'var(--gold)', fontSize: '0.75rem', fontWeight: 500, padding: '4px 10px', borderRadius: '100px' }}>
                 {rest.length} stories
               </span>
