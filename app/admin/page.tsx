@@ -30,6 +30,7 @@ export default function AdminPage() {
   const [alreadySent, setAlreadySent] = useState(false)
   const [takes, setTakes] = useState<Record<string, string>>({})
   const [newsletter, setNewsletter] = useState<Record<string, boolean>>({})
+  const [copied, setCopied] = useState<string | null>(null)
 
   async function login(e: React.FormEvent) {
     e.preventDefault()
@@ -116,6 +117,18 @@ export default function AdminPage() {
       setTakes(prev => ({ ...prev, [article.id]: data.take }))
     }
     setSuggesting(null)
+  }
+
+  async function copyXPost(article: Article) {
+    const take = takes[article.id]?.trim()
+    if (!take) {
+      alert('Write a take first.')
+      return
+    }
+    const post = `${take}\n\n${article.url}`
+    await navigator.clipboard.writeText(post)
+    setCopied(article.id)
+    setTimeout(() => setCopied(null), 2000)
   }
 
   async function sendNewsletter(force = false, test = false) {
@@ -309,6 +322,23 @@ export default function AdminPage() {
                       style={{ padding: '8px 16px', borderRadius: '100px', background: '#f5f0e8', color: '#8B6F47', fontWeight: 500, fontSize: '0.85rem', border: '1px solid #e8e0d0', cursor: 'pointer' }}
                     >
                       {suggesting === article.id ? 'Thinking...' : '✦ Suggest'}
+                    </button>
+                    <button
+                      onClick={() => copyXPost(article)}
+                      disabled={!takes[article.id]?.trim()}
+                      style={{
+                        padding: '8px 16px',
+                        borderRadius: '100px',
+                        background: copied === article.id ? '#2d5a27' : takes[article.id]?.trim() ? '#1a1a18' : '#e8e6e2',
+                        color: takes[article.id]?.trim() ? 'white' : '#9e9b94',
+                        fontWeight: 500,
+                        fontSize: '0.85rem',
+                        border: 'none',
+                        cursor: takes[article.id]?.trim() ? 'pointer' : 'default',
+                        transition: 'background 0.2s',
+                      }}
+                    >
+                      {copied === article.id ? '✓ Copied' : '𝕏 Post'}
                     </button>
                     <button
                       onClick={() => saveTake(article.id)}

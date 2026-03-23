@@ -1,5 +1,4 @@
 import { supabase } from '../../lib/supabase'
-import ArticleImage from './ArticleImage'
 import SidebarSignup from './SidebarSignup'
 
 export const revalidate = 0
@@ -69,11 +68,13 @@ export default async function Feed() {
               {newsletter.map((article, i) => (
                 <a key={article.id} href={article.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
                   <div style={{ background: 'white', borderRadius: '18px', border: '1px solid var(--border)', padding: '28px', marginBottom: '16px' }}>
-                    <ArticleImage
-                      src={article.image_url}
-                      alt={article.title}
-                      style={{ width: '100%', height: i === 0 ? '220px' : '160px', objectFit: 'cover', borderRadius: '12px', marginBottom: '20px' }}
-                    />
+                    {article.image_url && (
+                      <img
+                        src={article.image_url}
+                        alt={article.title}
+                        style={{ width: '100%', height: i === 0 ? '220px' : '160px', objectFit: 'cover', borderRadius: '12px', marginBottom: '20px' }}
+                      />
+                    )}
                     <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
                       <span style={{ background: 'var(--dark)', color: 'white', fontSize: '0.7rem', fontWeight: 600, padding: '4px 10px', borderRadius: '100px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Horveil Pick</span>
                       <span style={{ background: 'var(--gold-pale)', color: 'var(--gold)', fontSize: '0.7rem', fontWeight: 500, padding: '4px 10px', borderRadius: '100px' }}>{article.source}</span>
@@ -104,11 +105,13 @@ export default async function Feed() {
               {rest.map((article) => (
                 <a key={article.id} href={article.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
                   <div style={{ background: 'white', borderRadius: '14px', border: '1px solid var(--border)', padding: '20px 24px', marginBottom: '12px', display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
-                    <ArticleImage
-                      src={article.image_url}
-                      alt={article.title}
-                      style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '10px', flexShrink: 0 }}
-                    />
+                    {article.image_url && (
+                      <img
+                        src={article.image_url}
+                        alt={article.title}
+                        style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '10px', flexShrink: 0 }}
+                      />
+                    )}
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
                         <span style={{ background: 'var(--gold-pale)', color: 'var(--gold)', fontSize: '0.7rem', fontWeight: 500, padding: '3px 8px', borderRadius: '100px' }}>{article.source}</span>
