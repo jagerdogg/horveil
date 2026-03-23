@@ -68,11 +68,11 @@ async function parseFeed(url: string, source: string) {
 
       if (title && link && link.startsWith('http')) {
         items.push({
-          title: title.replace(/&amp;/g, '&').replace(/&#8211;/g, '-').replace(/&#8212;/g, '-').replace(/&#039;/g, "'").replace(/&#8220;/g, '"').replace(/&#8221;/g, '"').replace(/&#8216;/g, "'").replace(/&#8217;/g, "'").replace(/&quot;/g, '"').replace(/&nbsp;/g, ' '),
+          title: title.replace(/&amp;/g, '&').replace(/&#038;/g, '&').replace(/&#38;/g, '&').replace(/&#8211;/g, '-').replace(/&#8212;/g, '-').replace(/&#039;/g, "'").replace(/&#x27;/g, "'").replace(/&#8220;/g, '"').replace(/&#8221;/g, '"').replace(/&#8216;/g, "'").replace(/&#8217;/g, "'").replace(/&quot;/g, '"').replace(/&nbsp;/g, ' ').replace(/&lt;/g, '<').replace(/&gt;/g, '>'),
           url: link,
           source,
           published_at: pubDate ? new Date(pubDate).toISOString() : new Date().toISOString(),
-          summary: description.replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').slice(0, 300).trim(),
+          summary: description.replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').replace(/&#038;/g, '&').replace(/&#38;/g, '&').replace(/&#8211;/g, '-').replace(/&#8212;/g, '-').replace(/&#039;/g, "'").replace(/&#x27;/g, "'").replace(/&#8220;/g, '"').replace(/&#8221;/g, '"').replace(/&#8216;/g, "'").replace(/&#8217;/g, "'").replace(/&quot;/g, '"').replace(/&nbsp;/g, ' ').replace(/&lt;/g, '<').replace(/&gt;/g, '>').slice(0, 300).trim(),
           image_url: imageUrl || null,
           tag: source,
           in_newsletter: false,
