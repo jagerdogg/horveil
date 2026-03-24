@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 824.26 278.79">
+  <defs>
+    <style>
+      .cls-1, .cls-2, .cls-3 {
+        fill: #8b6f47;
+      }
+
+      .cls-1, .cls-2, .cls-3, .cls-4, .cls-5, .cls-6 {
+        isolation: isolate;
+      }
+
+      .cls-1, .cls-4 {
+        opacity: .8;
+      }
+
+      .cls-1, .cls-5 {
+        stroke: #8b6f47;
+      }
+
+      .cls-2 {
+        font-family: Georgia, Georgia;
+        font-size: 70.16px;
+        letter-spacing: .16em;
+      }
+
+      .cls-7 {
+        fill: #f5efe6;
+      }
+
+      .cls-3 {
+        font-family: Georgia-Italic, Georgia;
+        font-size: 8.77px;
+        font-style: italic;
+        letter-spacing: .36em;
+      }
+
+      .cls-4, .cls-5, .cls-6 {
+        fill: none;
+      }
+
+      .cls-4, .cls-6 {
+        stroke: #8b6f47;
+      }
+
+      .cls-5, .cls-6 {
+        opacity: .4;
+      }
+    </style>
+  </defs>
+  <rect class="cls-7" x="0" y="0" width="824.26" height="278.79" rx="1" ry="1"/>
+  <line class="cls-1" x1="242.98" y1="84.66" x2="581.28" y2="84.66"/>
+  <line class="cls-6" x1="242.98" y1="87.79" x2="581.28" y2="87.79"/>
+  <text class="cls-2" transform="translate(217.98 155.78)"><tspan x="0" y="0">HORVEIL</tspan></text>
+  <line class="cls-5" x1="242.98" y1="174.87" x2="581.28" y2="174.87"/>
+  <line class="cls-4" x1="242.98" y1="178.01" x2="581.28" y2="178.01"/>
+  <text class="cls-3" transform="translate(338.23 203.69)"><tspan x="0" y="0">watch culture, deeper</tspan></text>
+</svg>

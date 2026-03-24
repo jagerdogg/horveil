@@ -13,18 +13,13 @@ export default function Navbar() {
       top: 0,
       zIndex: 10,
     }}>
-      <Link href="/" style={{ textDecoration: 'none' }}>
-        <span style={{
-          fontFamily: 'Playfair Display, serif',
-          fontSize: '22px',
-          fontWeight: 600,
-          color: '#1a1a18',
-          letterSpacing: '-0.02em',
-        }}>
-          Hor<span style={{ color: '#8B6F47' }}>veil</span>
-        </span>
+      <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+        <img
+          src="/wordmark_split.svg"
+          alt="Horveil"
+          style={{ height: '28px', width: 'auto', display: 'block' }}
+        />
       </Link>
-
       <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
         <Link href="/" style={{ fontSize: '13px', color: '#6b6860', textDecoration: 'none', fontFamily: 'DM Sans, sans-serif' }}>
           Feed
