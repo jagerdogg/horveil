@@ -30,8 +30,7 @@ function buildEmailHtml(articles: any[], date: string) {
     <div style="background: #F9F7F4; padding: 2rem 1rem; font-family: Arial, sans-serif;">
       <div style="max-width: 600px; margin: 0 auto; background: #F9F7F4;">
         <div style="text-align: center; padding: 2rem 0 1rem;">
-          <img src="https://horveil.com/full_split.svg" alt="Horveil" width="260" style="display: inline-block; width: 260px; max-width: 100%;" />
-        </div>
+          <img src="https://horveil.com/full_split.svg" alt="Horveil" width="380" style="display: inline-block; width: 380px; max-width: 100%;"
         <div style="text-align: center; padding: 0 0 1.5rem;">
           <div style="font-size: 13px; color: #888;">${date} · Five stories worth your time</div>
         </div>
