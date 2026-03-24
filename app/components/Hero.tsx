@@ -25,7 +25,7 @@ export default function Hero() {
   }
 
   return (
-    <section style={{ background: 'var(--dark)', color: 'white', padding: '96px 24px 80px', position: 'relative', overflow: 'hidden' }}>
+    <section style={{ background: 'var(--dark)', color: 'white', padding: '56px 24px 80px', position: 'relative', overflow: 'hidden' }}>
 
       <div style={{ maxWidth: '680px', margin: '0 auto', textAlign: 'center', position: 'relative' }}>
 
