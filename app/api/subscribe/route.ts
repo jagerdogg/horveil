@@ -1,12 +1,7 @@
-import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { randomUUID } from 'crypto'
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+import { supabaseAdmin } from '../../../lib/supabase'
 
 export async function POST(request: Request) {
   const { email } = await request.json()
@@ -16,7 +11,7 @@ export async function POST(request: Request) {
   }
 
   // Check if already exists
-  const { data: existing } = await supabase
+  const { data: existing } = await supabaseAdmin
     .from('subscribers')
     .select('confirmed')
     .eq('email', email)
@@ -27,7 +22,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Already subscribed' }, { status: 409 })
     } else {
       // Unconfirmed — delete and let them re-subscribe
-      await supabase
+      await supabaseAdmin
         .from('subscribers')
         .delete()
         .eq('email', email)
@@ -36,7 +31,7 @@ export async function POST(request: Request) {
 
   const token = randomUUID()
 
-  const { error } = await supabase
+  const { error } = await supabaseAdmin
     .from('subscribers')
     .insert([{ email, confirmation_token: token, confirmed: false }])
 

@@ -1,10 +1,5 @@
-import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+import { supabaseAdmin } from '../../../lib/supabase'
 
 export async function POST(request: Request) {
   const { email } = await request.json()
@@ -13,7 +8,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Email required' }, { status: 400 })
   }
 
-  const { error } = await supabase
+  const { error } = await supabaseAdmin
     .from('subscribers')
     .delete()
     .eq('email', email)

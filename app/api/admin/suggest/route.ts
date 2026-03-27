@@ -23,7 +23,10 @@ Rules:
 - No collector jargon or snobbery
 - Natural spoken language, like telling a friend over a pint
 - One sentence, max 20 words
-- Focus on why it matters on a deeper level, the story behind the story, or whether it is genuinely worth your time
+- Focus on the actual story — what makes it interesting, who it's really for, or whether it's worth the money
+- Never say "worth paying attention to", "quietly", "this matters", "deserves a look", "stands out", or any phrase that sounds like AI summarizing something
+- Never start with "This", "It", or the brand name
+- Sound like a person with an opinion, not a content generator
 
 Article: "${title}"
 Source: ${source}

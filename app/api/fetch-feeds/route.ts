@@ -1,10 +1,5 @@
-import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+import { supabaseAdmin } from '../../../lib/supabase'
 
 const FEEDS = [
   { url: 'https://feeds.feedburner.com/hodinkee', source: 'Hodinkee' },
@@ -95,7 +90,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  await supabase
+  await supabaseAdmin
     .from('articles')
     .update({ in_newsletter: false, featured: false })
     .gte('created_at', '2000-01-01')
@@ -107,7 +102,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ success: false, error: 'No articles parsed', count: 0 })
   }
 
-  const { error } = await supabase
+  const { error } = await supabaseAdmin
     .from('articles')
     .upsert(allArticles, { onConflict: 'url' })
 

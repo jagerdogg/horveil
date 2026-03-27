@@ -1,10 +1,5 @@
-import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+import { supabaseAdmin } from '../../../lib/supabase'
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
@@ -14,7 +9,7 @@ export async function GET(request: Request) {
     return NextResponse.redirect(new URL('/?confirmed=false', request.url))
   }
 
-  const { error } = await supabase
+  const { error } = await supabaseAdmin
     .from('subscribers')
     .update({ confirmed: true, confirmation_token: null })
     .eq('confirmation_token', token)

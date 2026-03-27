@@ -1,16 +1,11 @@
-import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+import { supabaseAdmin } from '../../../../lib/supabase'
 
 export async function GET() {
   const since = new Date()
   since.setHours(since.getHours() - 24)
 
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('articles')
     .select('*')
     .gte('created_at', since.toISOString())

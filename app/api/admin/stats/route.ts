@@ -1,13 +1,8 @@
-import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+import { supabaseAdmin } from '../../../../lib/supabase'
 
 export async function GET() {
-  const { count } = await supabase
+  const { count } = await supabaseAdmin
     .from('subscribers')
     .select('*', { count: 'exact', head: true })
     .eq('confirmed', true)

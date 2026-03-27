@@ -1,11 +1,6 @@
-import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+import { supabaseAdmin } from '../../../../lib/supabase'
 
 function buildEmailHtml(articles: any[], date: string) {
   const storiesHtml = articles.map((article) => `
@@ -30,7 +25,8 @@ function buildEmailHtml(articles: any[], date: string) {
     <div style="background: #F9F7F4; padding: 2rem 1rem; font-family: Arial, sans-serif;">
       <div style="max-width: 600px; margin: 0 auto; background: #F9F7F4;">
         <div style="text-align: center; padding: 1rem 0 1rem;">
-          <img src="https://horveil.com/full_split.svg" alt="Horveil" width="380" style="display: inline-block; width: 380px; max-width: 100%;"
+          <img src="https://horveil.com/full_split.svg" alt="Horveil" width="380" style="display: inline-block; width: 380px; max-width: 100%;" />
+        </div>
         <div style="text-align: center; padding: 0 0 1.5rem;">
           <div style="font-size: 13px; color: #888;">${date} · Five stories worth your time</div>
         </div>
@@ -61,7 +57,7 @@ export async function POST(request: Request) {
   const since = new Date()
   since.setHours(since.getHours() - 24)
 
-  const { data: articles, error: articlesError } = await supabase
+  const { data: articles, error: articlesError } = await supabaseAdmin
     .from('articles')
     .select('*')
     .eq('in_newsletter', true)
@@ -95,7 +91,7 @@ export async function POST(request: Request) {
   if (!force) {
     const today = new Date()
     today.setHours(0, 0, 0, 0)
-    const { data: todaySends } = await supabase
+    const { data: todaySends } = await supabaseAdmin
       .from('newsletter_sends')
       .select('id')
       .gte('sent_at', today.toISOString())
@@ -106,7 +102,7 @@ export async function POST(request: Request) {
     }
   }
 
-  const { data: subscribers, error: subsError } = await supabase
+  const { data: subscribers, error: subsError } = await supabaseAdmin
     .from('subscribers')
     .select('email')
     .eq('confirmed', true)
@@ -129,7 +125,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: sendError.message }, { status: 500 })
   }
 
-  await supabase
+  await supabaseAdmin
     .from('newsletter_sends')
     .insert([{ subscriber_count: subscribers.length }])
 
