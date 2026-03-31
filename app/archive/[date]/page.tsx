@@ -53,23 +53,25 @@ async function getEdition(date: string): Promise<Send | null> {
 async function getAdjacentEditions(date: string) {
   const { data: all } = await supabase
     .from('newsletter_sends')
-    .select('sent_date')
+    .select('sent_date, newsletter_articles(id)')
     .order('sent_date', { ascending: true })
 
   if (!all) return { prev: null, next: null }
 
-  const index = all.findIndex(s => s.sent_date === date)
+  const withArticles = all.filter((s: any) => s.newsletter_articles.length > 0)
+  const index = withArticles.findIndex(s => s.sent_date === date)
   return {
-    prev: index > 0 ? all[index - 1].sent_date : null,
-    next: index < all.length - 1 ? all[index + 1].sent_date : null,
+    prev: index > 0 ? withArticles[index - 1].sent_date : null,
+    next: index < withArticles.length - 1 ? withArticles[index + 1].sent_date : null,
   }
 }
 
-export async function generateMetadata({ params }: { params: { date: string } }) {
-  const edition = await getEdition(params.date)
+export async function generateMetadata({ params }: { params: Promise<{ date: string }> }) {
+  const { date } = await params
+  const edition = await getEdition(date)
   if (!edition) return {}
 
-  const date = new Date(edition.sent_date).toLocaleDateString('en-US', {
+  const dateFormatted = new Date(edition.sent_date).toLocaleDateString('en-US', {
     weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
   })
 
@@ -79,16 +81,17 @@ export async function generateMetadata({ params }: { params: { date: string } })
     .join(', ')
 
   return {
-    title: `Horveil · ${date}`,
-    description: `Watch news digest from ${date}. Stories from ${sources}.`,
+    title: `Horveil · ${dateFormatted}`,
+    description: `Watch news digest from ${dateFormatted}. Stories from ${sources}.`,
   }
 }
 
-export default async function EditionPage({ params }: { params: { date: string } }) {
-  const edition = await getEdition(params.date)
+export default async function EditionPage({ params }: { params: Promise<{ date: string }> }) {
+  const { date } = await params
+  const edition = await getEdition(date)
   if (!edition) notFound()
 
-  const { prev, next } = await getAdjacentEditions(params.date)
+  const { prev, next } = await getAdjacentEditions(date)
 
   const articles = edition.newsletter_articles.sort((a, b) => a.position - b.position)
 
@@ -99,7 +102,6 @@ export default async function EditionPage({ params }: { params: { date: string }
   return (
     <div style={{ maxWidth: '680px', margin: '0 auto', padding: '48px 24px' }}>
 
-      {/* Breadcrumb */}
       <div style={{ marginBottom: '32px' }}>
         <Link href="/" style={{ fontSize: '13px', color: 'var(--gold)', textDecoration: 'none' }}>Horveil</Link>
         <span style={{ fontSize: '13px', color: 'var(--muted)', margin: '0 8px' }}>›</span>
@@ -108,7 +110,6 @@ export default async function EditionPage({ params }: { params: { date: string }
         <span style={{ fontSize: '13px', color: 'var(--muted)' }}>{dateFormatted}</span>
       </div>
 
-      {/* Header */}
       <div style={{
         textAlign: 'center',
         padding: '2rem 0 2.5rem',
@@ -126,7 +127,6 @@ export default async function EditionPage({ params }: { params: { date: string }
         </p>
       </div>
 
-      {/* Stories */}
       {articles.map((article, i) => (
         <div key={article.id} style={{
           background: 'white',
@@ -204,7 +204,6 @@ export default async function EditionPage({ params }: { params: { date: string }
         </div>
       ))}
 
-      {/* Prev / Next navigation */}
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
@@ -227,7 +226,6 @@ export default async function EditionPage({ params }: { params: { date: string }
         ) : <span />}
       </div>
 
-      {/* Subscribe CTA */}
       <div style={{
         marginTop: '2rem',
         background: 'var(--dark)',
