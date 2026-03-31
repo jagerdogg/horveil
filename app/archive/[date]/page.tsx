@@ -43,7 +43,9 @@ async function getEdition(date: string): Promise<Send | null> {
       )
     `)
     .eq('sent_date', date)
-    .single()
+    .order('sent_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
 
   return data || null
 }
