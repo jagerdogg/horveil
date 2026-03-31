@@ -31,7 +31,7 @@ async function getSends(): Promise<SendWithArticles[]> {
     `)
     .order('sent_at', { ascending: false })
 
-  return data || []
+  return (data || []).filter(send => send.newsletter_articles.length > 0)
 }
 
 function parseDate(sent_date: string) {
