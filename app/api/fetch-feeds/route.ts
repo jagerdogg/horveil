@@ -1,5 +1,10 @@
+import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
-import { supabaseAdmin } from '../../../lib/supabase'
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
 
 const FEEDS = [
   { url: 'https://feeds.feedburner.com/hodinkee', source: 'Hodinkee' },
@@ -10,7 +15,32 @@ const FEEDS = [
   { url: 'https://revolutionwatch.com/feed/', source: 'Revolution' },
   { url: 'https://twobrokewatchsnobs.com/feed/', source: 'Two Broke Watch Snobs' },
   { url: 'https://timeandtidewatches.com/feed/', source: 'Time+Tide' },
+  { url: 'https://watchesbysjx.com/feed', source: 'SJX Watches' },
+  { url: 'https://oracleoftime.com/feed', source: 'Oracle Time' },
+  { url: 'https://quillandpad.com/feed', source: 'Quill & Pad' },
+  { url: 'https://acollectedman.com/blogs/journal.atom', source: 'A Collected Man', atom: true },
+  { url: 'https://teddybaldassarre.com/blogs/watches.atom', source: 'Teddy Baldassarre', atom: true },
 ]
+
+function cleanText(text: string): string {
+  return text
+    .replace(/&amp;/g, '&')
+    .replace(/&#038;/g, '&')
+    .replace(/&#38;/g, '&')
+    .replace(/&#8211;/g, '-')
+    .replace(/&#8212;/g, '-')
+    .replace(/&#039;/g, "'")
+    .replace(/&#x27;/g, "'")
+    .replace(/&#8220;/g, '"')
+    .replace(/&#8221;/g, '"')
+    .replace(/&#8216;/g, "'")
+    .replace(/&#8217;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .trim()
+}
 
 function extractTag(xml: string, tag: string): string {
   const patterns = [
@@ -38,7 +68,7 @@ function extractImage(xml: string): string {
   return ''
 }
 
-async function parseFeed(url: string, source: string) {
+async function parseRssFeed(url: string, source: string) {
   try {
     const res = await fetch(url, {
       headers: { 'User-Agent': 'Horveil/1.0 RSS Reader' },
@@ -63,11 +93,11 @@ async function parseFeed(url: string, source: string) {
 
       if (title && link && link.startsWith('http')) {
         items.push({
-          title: title.replace(/&amp;/g, '&').replace(/&#038;/g, '&').replace(/&#38;/g, '&').replace(/&#8211;/g, '-').replace(/&#8212;/g, '-').replace(/&#039;/g, "'").replace(/&#x27;/g, "'").replace(/&#8220;/g, '"').replace(/&#8221;/g, '"').replace(/&#8216;/g, "'").replace(/&#8217;/g, "'").replace(/&quot;/g, '"').replace(/&nbsp;/g, ' ').replace(/&lt;/g, '<').replace(/&gt;/g, '>'),
+          title: cleanText(title),
           url: link,
           source,
           published_at: pubDate ? new Date(pubDate).toISOString() : new Date().toISOString(),
-          summary: description.replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').replace(/&#038;/g, '&').replace(/&#38;/g, '&').replace(/&#8211;/g, '-').replace(/&#8212;/g, '-').replace(/&#039;/g, "'").replace(/&#x27;/g, "'").replace(/&#8220;/g, '"').replace(/&#8221;/g, '"').replace(/&#8216;/g, "'").replace(/&#8217;/g, "'").replace(/&quot;/g, '"').replace(/&nbsp;/g, ' ').replace(/&lt;/g, '<').replace(/&gt;/g, '>').slice(0, 300).trim(),
+          summary: cleanText(description.replace(/<[^>]*>/g, '').slice(0, 300)),
           image_url: imageUrl || null,
           tag: source,
           in_newsletter: false,
@@ -84,25 +114,78 @@ async function parseFeed(url: string, source: string) {
   }
 }
 
+async function parseAtomFeed(url: string, source: string) {
+  try {
+    const res = await fetch(url, {
+      headers: { 'User-Agent': 'Horveil/1.0 RSS Reader' },
+      next: { revalidate: 0 }
+    })
+    if (!res.ok) {
+      console.error(`${source}: HTTP ${res.status}`)
+      return []
+    }
+    const text = await res.text()
+    const items: any[] = []
+    const parts = text.split('<entry>')
+    parts.shift()
+
+    for (const part of parts) {
+      const entryXml = part.split('</entry>')[0]
+      const title = extractTag(entryXml, 'title')
+      const linkMatch = entryXml.match(/<link[^>]*href="([^"]*)"[^>]*>/i)
+      const link = linkMatch?.[1] || ''
+      const published = extractTag(entryXml, 'published') || extractTag(entryXml, 'updated')
+      const summary = extractTag(entryXml, 'summary') || extractTag(entryXml, 'content')
+      const imageUrl = extractImage(entryXml)
+
+      if (title && link && link.startsWith('http')) {
+        items.push({
+          title: cleanText(title),
+          url: link,
+          source,
+          published_at: published ? new Date(published).toISOString() : new Date().toISOString(),
+          summary: cleanText(summary.replace(/<[^>]*>/g, '').slice(0, 300)),
+          image_url: imageUrl || null,
+          tag: source,
+          in_newsletter: false,
+          featured: false,
+        })
+      }
+    }
+
+    console.log(`${source}: found ${items.length} items`)
+    return items.slice(0, 5)
+  } catch (e) {
+    console.error(`Failed to fetch ${source}:`, e)
+    return []
+  }
+}
+
+async function parseFeed(feed: { url: string; source: string; atom?: boolean }) {
+  return feed.atom
+    ? parseAtomFeed(feed.url, feed.source)
+    : parseRssFeed(feed.url, feed.source)
+}
+
 export async function GET(request: Request) {
   const authHeader = request.headers.get('authorization')
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  await supabaseAdmin
+  await supabase
     .from('articles')
     .update({ in_newsletter: false, featured: false })
     .gte('created_at', '2000-01-01')
 
-  const results = await Promise.all(FEEDS.map(f => parseFeed(f.url, f.source)))
+  const results = await Promise.all(FEEDS.map(f => parseFeed(f)))
   const allArticles = results.flat()
 
   if (allArticles.length === 0) {
     return NextResponse.json({ success: false, error: 'No articles parsed', count: 0 })
   }
 
-  const { error } = await supabaseAdmin
+  const { error } = await supabase
     .from('articles')
     .upsert(allArticles, { onConflict: 'url' })
 

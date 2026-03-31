@@ -1,6 +1,11 @@
+import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
-import { supabaseAdmin } from '../../../../lib/supabase'
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
 
 function buildEmailHtml(articles: any[], date: string) {
   const storiesHtml = articles.map((article) => `
@@ -57,7 +62,7 @@ export async function POST(request: Request) {
   const since = new Date()
   since.setHours(since.getHours() - 24)
 
-  const { data: articles, error: articlesError } = await supabaseAdmin
+  const { data: articles, error: articlesError } = await supabase
     .from('articles')
     .select('*')
     .eq('in_newsletter', true)
@@ -91,7 +96,7 @@ export async function POST(request: Request) {
   if (!force) {
     const today = new Date()
     today.setHours(0, 0, 0, 0)
-    const { data: todaySends } = await supabaseAdmin
+    const { data: todaySends } = await supabase
       .from('newsletter_sends')
       .select('id')
       .gte('sent_at', today.toISOString())
@@ -102,7 +107,7 @@ export async function POST(request: Request) {
     }
   }
 
-  const { data: subscribers, error: subsError } = await supabaseAdmin
+  const { data: subscribers, error: subsError } = await supabase
     .from('subscribers')
     .select('email')
     .eq('confirmed', true)
@@ -125,9 +130,34 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: sendError.message }, { status: 500 })
   }
 
-  await supabaseAdmin
+  // Log the send and snapshot articles for the archive
+  const sentDate = new Date().toISOString().split('T')[0]
+
+  const { data: sendRecord } = await supabase
     .from('newsletter_sends')
-    .insert([{ subscriber_count: subscribers.length }])
+    .insert([{
+      subscriber_count: subscribers.length,
+      sent_date: sentDate,
+    }])
+    .select()
+    .single()
+
+  if (sendRecord) {
+    await supabase
+      .from('newsletter_articles')
+      .insert(
+        articles.map((article, index) => ({
+          send_id: sendRecord.id,
+          title: article.title,
+          url: article.url,
+          source: article.source,
+          image_url: article.image_url || null,
+          horveil_take: article.horveil_take || null,
+          published_at: article.published_at,
+          position: index + 1,
+        }))
+      )
+  }
 
   return NextResponse.json({ success: true, sent: subscribers.length })
 }

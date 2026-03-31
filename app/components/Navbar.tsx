@@ -24,6 +24,9 @@ export default function Navbar() {
         <Link href="/" style={{ fontSize: '13px', color: '#6b6860', textDecoration: 'none', fontFamily: 'DM Sans, sans-serif' }}>
           Feed
         </Link>
+        <Link href="/archive" style={{ fontSize: '13px', color: '#6b6860', textDecoration: 'none', fontFamily: 'DM Sans, sans-serif' }}>
+          Archive
+        </Link>
         <Link href="/about" style={{ fontSize: '13px', color: '#6b6860', textDecoration: 'none', fontFamily: 'DM Sans, sans-serif' }}>
           About
         </Link>

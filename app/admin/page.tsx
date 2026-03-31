@@ -23,7 +23,8 @@ export default function AdminPage() {
   const [saving, setSaving] = useState<string | null>(null)
   const [saved, setSaved] = useState<string | null>(null)
   const [suggesting, setSuggesting] = useState<string | null>(null)
-  const [sending, setSending] = useState(false)
+  const [sendingTest, setSendingTest] = useState(false)
+  const [sendingNewsletter, setSendingNewsletter] = useState(false)
   const [fetching, setFetching] = useState(false)
   const [clearing, setClearing] = useState(false)
   const [subscriberCount, setSubscriberCount] = useState<number | null>(null)
@@ -138,7 +139,10 @@ export default function AdminPage() {
       ? 'Force send newsletter to all confirmed subscribers?'
       : 'Send newsletter to all confirmed subscribers?'
     if (!confirm(confirmMsg)) return
-    setSending(true)
+
+    if (test) setSendingTest(true)
+    else setSendingNewsletter(true)
+
     const res = await fetch('/api/admin/send-newsletter', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -156,7 +160,9 @@ export default function AdminPage() {
     } else {
       alert(`Error: ${data.error}`)
     }
-    setSending(false)
+
+    if (test) setSendingTest(false)
+    else setSendingNewsletter(false)
   }
 
   async function fetchNow() {
@@ -196,8 +202,10 @@ export default function AdminPage() {
     return (
       <div style={{ minHeight: '100vh', background: '#1a1a18', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <form onSubmit={login} style={{ background: '#2a2a28', padding: '48px', borderRadius: '18px', width: '320px' }}>
-          <h1 style={{ fontFamily: 'Georgia, serif', color: '#c9a96e', fontSize: '1.8rem', marginBottom: '8px', textAlign: 'center' }}>Horveil</h1>
-          <p style={{ color: '#6b6860', fontSize: '0.85rem', textAlign: 'center', marginBottom: '32px' }}>Admin</p>
+          <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+            <img src="/wordmark_white.svg" alt="Horveil" style={{ height: '28px', width: 'auto', display: 'inline-block' }} />
+            <p style={{ color: '#6b6860', fontSize: '0.85rem', marginTop: '8px' }}>Admin</p>
+          </div>
           <input
             type="password"
             value={password}
@@ -254,28 +262,28 @@ export default function AdminPage() {
             {newsletterCount === 5 && (
               <button
                 onClick={() => sendNewsletter(false, true)}
-                disabled={sending}
+                disabled={sendingTest}
                 style={{ padding: '8px 20px', borderRadius: '100px', background: '#5a4a38', color: 'white', fontWeight: 500, fontSize: '0.85rem', border: 'none', cursor: 'pointer' }}
               >
-                {sending ? 'Sending...' : 'Send test'}
+                {sendingTest ? 'Sending...' : 'Send test'}
               </button>
             )}
             {newsletterCount === 5 && !alreadySent && (
               <button
                 onClick={() => sendNewsletter(false, false)}
-                disabled={sending}
+                disabled={sendingNewsletter}
                 style={{ padding: '8px 20px', borderRadius: '100px', background: '#2d5a27', color: 'white', fontWeight: 500, fontSize: '0.85rem', border: 'none', cursor: 'pointer' }}
               >
-                {sending ? 'Sending...' : 'Send newsletter'}
+                {sendingNewsletter ? 'Sending...' : 'Send newsletter'}
               </button>
             )}
             {newsletterCount === 5 && alreadySent && (
               <button
                 onClick={() => sendNewsletter(true, false)}
-                disabled={sending}
+                disabled={sendingNewsletter}
                 style={{ padding: '8px 20px', borderRadius: '100px', background: '#8B4F47', color: 'white', fontWeight: 500, fontSize: '0.85rem', border: 'none', cursor: 'pointer' }}
               >
-                {sending ? 'Sending...' : 'Force send'}
+                {sendingNewsletter ? 'Sending...' : 'Force send'}
               </button>
             )}
           </div>
