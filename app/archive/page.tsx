@@ -34,10 +34,15 @@ async function getSends(): Promise<SendWithArticles[]> {
   return data || []
 }
 
+function parseDate(sent_date: string) {
+  const [year, month, day] = sent_date.split('-').map(Number)
+  return new Date(year, month - 1, day)
+}
+
 function groupByMonth(sends: SendWithArticles[]) {
   const groups: Record<string, SendWithArticles[]> = {}
   sends.forEach(send => {
-    const date = new Date(send.sent_date)
+    const date = parseDate(send.sent_date)
     const key = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
     if (!groups[key]) groups[key] = []
     groups[key].push(send)
@@ -82,7 +87,7 @@ export default async function ArchivePage() {
             </div>
 
             {monthSends.map(send => {
-              const date = new Date(send.sent_date)
+              const date = parseDate(send.sent_date)
               const day = date.getDate()
               const dow = date.toLocaleDateString('en-US', { weekday: 'short' })
               const sources = send.newsletter_articles
@@ -107,11 +112,7 @@ export default async function ArchivePage() {
                     display: 'flex',
                     alignItems: 'flex-start',
                     gap: '1rem',
-                    transition: 'border-color 0.15s',
-                  }}
-                    onMouseEnter={e => (e.currentTarget.style.borderColor = '#8b6f47')}
-                    onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--border)')}
-                  >
+                  }}>
                     <div style={{ minWidth: '52px', textAlign: 'center', paddingTop: '2px' }}>
                       <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', fontWeight: 500, color: 'var(--foreground)', lineHeight: 1 }}>{day}</div>
                       <div style={{ fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--muted)', marginTop: '3px' }}>{dow}</div>
