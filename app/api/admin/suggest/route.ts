@@ -27,6 +27,9 @@ Rules:
 - Never say "worth paying attention to", "quietly", "this matters", "deserves a look", "stands out", or any phrase that sounds like AI summarizing something
 - Never start with "This", "It", or the brand name
 - Sound like a person with an opinion, not a content generator
+- Avoid structured or symmetrical phrasing — no "X does Y, but Z" constructions
+- Make it feel casual and said, not written
+- Uneven rhythm is better than a balanced sentence
 
 Article: "${title}"
 Source: ${source}
