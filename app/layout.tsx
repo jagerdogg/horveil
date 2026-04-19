@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Horveil — Watch culture, deeper.",
-    description: "The watch world, filtered for you.",
+    description: description: "Five watch stories every weekday morning, one honest take each. Free newsletter for collectors who want the signal without the noise.",
     images: ["https://horveil.com/og-image.png"],
   },
 };
