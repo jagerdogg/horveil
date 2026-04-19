@@ -9,6 +9,20 @@ export const metadata: Metadata = {
     description: "The watch world, filtered for you.",
     url: "https://horveil.com",
     siteName: "Horveil",
+    images: [
+      {
+        url: "https://horveil.com/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Horveil — Watch culture, deeper.",
+      }
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Horveil — Watch culture, deeper.",
+    description: "The watch world, filtered for you.",
+    images: ["https://horveil.com/og-image.png"],
   },
 };
 
